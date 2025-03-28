@@ -1,0 +1,13 @@
+package com.bestprogramer.bestprogramer.repositories;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.bestprogramer.bestprogramer.models.Inscription;
+
+@Repository
+public interface InscriptionRepository extends JpaRepository<Inscription, Long> {
+    // Méthodes de requête personnalisées peuvent être ajoutées ici
+}
+
+

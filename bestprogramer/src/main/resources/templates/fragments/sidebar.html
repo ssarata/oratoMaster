@@ -1,0 +1,40 @@
+<div class="d-flex flex-column flex-shrink-0 p-3 bg-light sidebar" style="width: 250px; height: 100vh;" th:fragment="sidebar">
+        <a href="#" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none">
+            <i class="bi bi-bootstrap fs-3 me-2"></i>
+            <span class="fs-5 fw-bold">Mon App</span>
+        </a>
+        <hr>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item">
+                <a th:href="@{/dashboard}" class="nav-link active">
+                    <i class="bi bi-house-door me-2"></i> Dashboard
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/users}" class="nav-link text-dark">
+                    <i class="bi bi-people me-2"></i> Utilisateurs
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/projects}" class="nav-link text-dark">
+                    <i class="bi bi-kanban me-2"></i> Projets
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/settings}" class="nav-link text-dark">
+                    <i class="bi bi-gear me-2"></i> Paramètres
+                </a>
+            </li>
+        </ul>
+        <hr>
+        <div class="dropdown">
+            <a href="#" class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+                <i class="bi bi-person-circle me-2"></i>
+                <strong>Admin</strong>
+            </a>
+            <ul class="dropdown-menu shadow">
+                <li><a th:href="@{/profile}" class="dropdown-item">Profil</a></li>
+                <li><a th:href="@{/logout}" class="dropdown-item">Déconnexion</a></li>
+            </ul>
+        </div>
+    </div>

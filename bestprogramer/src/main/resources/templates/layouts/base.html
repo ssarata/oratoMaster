@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Template de Base</title>
+</head>
+<body>
+
+<!-- Insertion du fragment Navbar -->
+<div th:replace="~{fragments/navbar}"></div>
+
+<!-- Insertion du fragment Sidebar -->
+<div th:replace="~{fragments/sidebar}"></div>
+
+<!-- Contenu principal de la page -->
+<main>
+    <div th:fragment="content">Contenu par défaut</div>
+</main>
+
+<!-- Insertion du fragment Footer -->
+<div th:replace="~{fragments/footer}"></div>
+
+</body>
+</html>

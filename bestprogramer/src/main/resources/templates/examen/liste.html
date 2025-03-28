@@ -1,0 +1,16 @@
+<table class="table">
+    <thead>
+        <tr>
+            <th>Titre</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="examen : ${examens}">
+            <td th:text="${examen.titre}"></td>
+            <td>
+                <a th:href="@{/examens/{id}(id=${examen.id})}" class="btn btn-primary">Passer</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
