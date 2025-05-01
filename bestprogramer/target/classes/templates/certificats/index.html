@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificats - Art Oratoire</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3a0ca3;
+            --secondary-color: #f72585;
+            --accent-color: #4cc9f0;
+            --dark-color: #2b2d42;
+            --light-color: #f8f9fa;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar {
+            background-color: white;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+            height: 100%;
+        }
+        
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.25rem;
+            color: var(--dark-color);
+            text-decoration: none;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-link:hover, .sidebar-link.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .sidebar-link i {
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+        }
+        
+        .certificate-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+        }
+        
+        .certificate-card {
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        
+        .certificate-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .certificate-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.5rem;
+        }
+        
+        .certificate-preview {
+            width: 100%;
+            height: 300px;
+            object-fit: contain;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #2a0a73;
+            border-color: #2a0a73;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="/">
+                <span class="text-primary">Art</span>Oratoire
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span sec:authentication="name">Utilisateur</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="/users/profile"><i class="fas fa-user me-2"></i>Profil</a></li>
+                            <li><a class="dropdown-item" href="/users/edit"><i class="fas fa-cog me-2"></i>Paramètres</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt me-2"></i>Déconnexion</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-3 col-xl-2 px-0 sidebar" style="min-height: calc(100vh - 56px);">
+                <div class="p-3">
+                    <div class="mb-4">
+                        <a href="/dashboard" class="sidebar-link">
+                            <i class="fas fa-home"></i> Tableau de bord
+                        </a>
+                        <a href="/formation" class="sidebar-link">
+                            <i class="fas fa-graduation-cap"></i> Formation
+                        </a>
+                        <a href="/bibliotheque" class="sidebar-link">
+                            <i class="fas fa-book"></i> Bibliothèque
+                        </a>
+                        <a href="/messages" class="sidebar-link">
+                            <i class="fas fa-comments"></i> Messages
+                        </a>
+                        <a href="/certificats" class="sidebar-link active">
+                            <i class="fas fa-certificate"></i> Certificats
+                        </a>
+                        <a href="/users/profile" class="sidebar-link">
+                            <i class="fas fa-user"></i> Profil
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-lg-9 col-xl-10 main-content">
+                <h2 class="mb-4">Mes certificats</h2>
+                
+                <!-- Si l'utilisateur a des certificats -->
+                <div th:if="${!#lists.isEmpty(certificats)}">
+                    <div class="row">
+                        <div th:each="certificat : ${certificats}" class="col-md-6 col-lg-4">
+                            <div class="certificate-card">
+                                <div class="certificate-header">
+                                    <h4 class="mb-0">Certificat d'Art Oratoire</h4>
+                                </div>
+                                <div class="card-body p-4">
+                                    <img src="/placeholder.svg?height=300&width=400" class="certificate-preview" alt="Aperçu du certificat">
+                                    
+                                    <div class="mb-3">
+                                        <p class="mb-1"><strong>Numéro:</strong> <span th:text="${certificat.numero}">12345</span></p>
+                                        <p class="mb-1"><strong>Date d'émission:</strong> <span th:text="${#temporals.format(certificat.dateEmission, 'dd/MM/yyyy')}">01/01/2023</span></p>
+                                    </div>
+                                    
+                                    <div class="d-grid">
+                                        <a th:href="@{'/uploads/' + ${certificat.fichierPdf}}" class="btn btn-primary" target="_blank">
+                                            <i class="fas fa-download me-2"></i>Télécharger
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Si l'utilisateur n'a pas de certificat mais est éligible -->
+                <div th:if="${#lists.isEmpty(certificats) && eligibleCertificat}" class="certificate-container text-center py-5">
+                    <i class="fas fa-award fa-4x text-primary mb-3"></i>
+                    <h3 class="mb-3">Félicitations !</h3>
+                    <p class="mb-4">Vous avez terminé tous les cours et êtes éligible pour recevoir votre certificat d'Art Oratoire.</p>
+                    <a href="/certificats/generer" class="btn btn-primary btn-lg">
+                        <i class="fas fa-certificate me-2"></i>Générer mon certificat
+                    </a>
+                </div>
+                
+                <!-- Si l'utilisateur n'a pas de certificat et n'est pas éligible -->
+                <div th:if="${#lists.isEmpty(certificats) && !eligibleCertificat}" class="certificate-container text-center py-5">
+                    <i class="fas fa-graduation-cap fa-4x text-muted mb-3"></i>
+                    <h3 class="mb-3">Pas encore de certificat</h3>
+                    <p class="mb-4">Terminez tous les cours de la formation pour obtenir votre certificat d'Art Oratoire.</p>
+                    <a href="/formation" class="btn btn-primary">
+                        <i class="fas fa-arrow-right me-2"></i>Continuer ma formation
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - Art Oratoire</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3a0ca3;
+            --secondary-color: #f72585;
+            --accent-color: #4cc9f0;
+            --dark-color: #2b2d42;
+            --light-color: #f8f9fa;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+        
+        .register-container {
+            padding: 2rem 0;
+        }
+        
+        .register-card {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .register-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #2a0a73;
+            border-color: #2a0a73;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(58, 12, 163, 0.25);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                <span class="text-primary">Art</span>Oratoire
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/formation">Formation</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/bibliotheque">Bibliothèque</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Connexion</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active btn btn-primary text-white ms-2 px-4" href="/register">S'inscrire</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="register-container">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card register-card">
+                        <div class="register-header">
+                            <h3 class="mb-0 fw-bold">Inscription</h3>
+                            <p class="mb-0">Créez votre compte Art Oratoire</p>
+                        </div>
+                        <div class="card-body p-4">
+                            <form th:action="@{/register}" method="post" th:object="${user}" enctype="multipart/form-data">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="nom" class="form-label">Nom</label>
+                                        <input type="text" class="form-control" id="nom" th:field="*{nom}" required>
+                                        <div class="text-danger" th:if="${#fields.hasErrors('nom')}" th:errors="*{nom}"></div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="prenom" class="form-label">Prénom</label>
+                                        <input type="text" class="form-control" id="prenom" th:field="*{prenom}" required>
+                                        <div class="text-danger" th:if="${#fields.hasErrors('prenom')}" th:errors="*{prenom}"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="motDePasse" class="form-label">Mot de passe</label>
+                                    <input type="password" class="form-control" id="motDePasse" th:field="*{motDePasse}" required>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('motDePasse')}" th:errors="*{motDePasse}"></div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="sexe" class="form-label">Sexe</label>
+                                        <select class="form-select" id="sexe" th:field="*{sexe}">
+                                            <option value="">Sélectionnez</option>
+                                            <option value="Homme">Homme</option>
+                                            <option value="Femme">Femme</option>
+                                            <option value="Autre">Autre</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="contact" class="form-label">Contact</label>
+                                        <input type="text" class="form-control" id="contact" th:field="*{contact}">
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="role" class="form-label">Je m'inscris en tant que</label>
+                                    <select class="form-select" id="role" th:field="*{role}" required>
+                                        <option value="">Sélectionnez</option>
+                                        <option value="apprenant">Apprenant</option>
+                                        <option value="formateur">Formateur</option>
+                                    </select>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('role')}" th:errors="*{role}"></div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="photoFile" class="form-label">Photo de profil</label>
+                                    <input type="file" class="form-control" id="photoFile" name="photoFile" accept="image/*">
+                                </div>
+                                
+                                <div class="mb-3" id="cvSection" style="display: none;">
+                                    <label for="cvFile" class="form-label">CV (pour les formateurs)</label>
+                                    <input type="file" class="form-control" id="cvFile" name="cvFile" accept=".pdf,.doc,.docx">
+                                </div>
+                                
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary">S'inscrire</button>
+                                </div>
+                            </form>
+                            
+                            <div class="text-center mt-4">
+                                <p class="mb-0">Vous avez déjà un compte ? <a href="/login" class="text-primary">Se connecter</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-4 bg-dark text-white">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2023 ArtOratoire. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('role').addEventListener('change', function() {
+            var cvSection = document.getElementById('cvSection');
+            if (this.value === 'formateur') {
+                cvSection.style.display = 'block';
+            } else {
+                cvSection.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

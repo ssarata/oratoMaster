@@ -1,9 +1,0 @@
-{
-    "properties": [
-      {
-        "name": "gemini.api.key",
-        "type": "java.lang.String",
-        "description": "Clé API pour accéder à gemini."
-      }
-    ]
-  }

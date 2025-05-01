@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Art Oratoire - Maîtrisez l'art de la parole</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4e2a84;
+            --secondary-color: #f72585;
+            --accent-color: #4cc9f0;
+            --dark-color: #2b2d42;
+            --light-color: #f8f9fa;
+            --gradient-primary: linear-gradient(135deg, #4e2a84, #7c4dff);
+            --gradient-secondary: linear-gradient(135deg, #f72585, #ff5a5f);
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--dark-color);
+            overflow-x: hidden;
+        }
+        
+        .navbar {
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar.scrolled {
+            background-color: white !important;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            padding: 0.5rem 0;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            margin: 0 0.5rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .btn-register {
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(78, 42, 132, 0.2);
+        }
+        
+        .btn-register:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(78, 42, 132, 0.3);
+        }
+        
+        .hero-section {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 120px 0 160px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,128C960,128,1056,192,1152,213.3C1248,235,1344,213,1392,202.7L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-position: bottom;
+            background-repeat: no-repeat;
+            background-size: cover;
+            opacity: 0.6;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .hero-image {
+            position: relative;
+            z-index: 1;
+            animation: float 6s ease-in-out infinite;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            transform: perspective(1000px) rotateY(-15deg);
+        }
+        
+        @keyframes float {
+            0% { transform: perspective(1000px) rotateY(-15deg) translateY(0px); }
+            50% { transform: perspective(1000px) rotateY(-15deg) translateY(-20px); }
+            100% { transform: perspective(1000px) rotateY(-15deg) translateY(0px); }
+        }
+        
+        .btn-hero {
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+        
+        .btn-hero-primary {
+            background-color: white;
+            color: var(--primary-color);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-hero-primary:hover {
+            background-color: #f8f9fa;
+            color: var(--primary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.4);
+        }
+        
+        .btn-hero-outline {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .btn-hero-outline:hover {
+            background-color: white;
+            color: var(--primary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+        }
+        
+        .section-padding {
+            padding: 100px 0;
+        }
+        
+        .section-title {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 4px;
+            bottom: -10px;
+            left: 0;
+            background: var(--gradient-primary);
+            border-radius: 2px;
+        }
+        
+        .section-subtitle {
+            color: #6c757d;
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+        
+        .feature-card {
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 10px 20px rgba(78, 42, 132, 0.2);
+        }
+        
+        .feature-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+        
+        .testimonial-card {
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            position: relative;
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        
+        .testimonial-card::before {
+            content: '\201C';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 5rem;
+            color: rgba(78, 42, 132, 0.1);
+            font-family: serif;
+            line-height: 1;
+        }
+        
+        .testimonial-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            border: 3px solid white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .testimonial-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .testimonial-position {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            color: #495057;
+        }
+        
+        .star-rating {
+            color: #ffc107;
+        }
+        
+        .cta-section {
+            background: var(--gradient-secondary);
+            color: white;
+            padding: 80px 0;
+            position: relative;
+            overflow: hidden;
+            border-radius: 0;
+        }
+        
+        .cta-section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" d="M0,160L48,170.7C96,181,192,203,288,202.7C384,203,480,181,576,165.3C672,149,768,139,864,154.7C960,171,1056,213,1152,218.7C1248,224,1344,192,1392,176L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-position: bottom;
+            background-repeat: no-repeat;
+            background-size: cover;
+            opacity: 0.6;
+        }
+        
+        .cta-title {
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            font-size: 2.5rem;
+        }
+        
+        .cta-text {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .btn-cta {
+            background-color: white;
+            color: var(--secondary-color);
+            padding: 0.8rem 2.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-cta:hover {
+            background-color: #f8f9fa;
+            color: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.4);
+        }
+        
+        footer {
+            background-color: #1a1a2e;
+            color: white;
+            padding: 80px 0 30px;
+        }
+        
+        .footer-title {
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            font-size: 1.25rem;
+        }
+        
+        .footer-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-link:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .footer-contact {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .footer-contact i {
+            margin-right: 1rem;
+            font-size: 1.25rem;
+            width: 20px;
+        }
+        
+        .social-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            margin-right: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        
+        .social-icon:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 30px;
+            margin-top: 50px;
+        }
+        
+        .newsletter-input {
+            border-radius: 30px 0 0 30px;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            height: 50px;
+        }
+        
+        .newsletter-btn {
+            border-radius: 0 30px 30px 0;
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+            height: 50px;
+            padding: 0 1.5rem;
+        }
+        
+        .about-img {
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .about-img:hover {
+            transform: scale(1.03);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .check-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .check-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            color: white;
+            margin-right: 1rem;
+            font-size: 0.75rem;
+        }
+        
+        @media (max-width: 991.98px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-section {
+                padding: 80px 0 120px;
+            }
+            
+            .hero-image {
+                margin-top: 3rem;
+            }
+            
+            .section-padding {
+                padding: 70px 0;
+            }
+        }
+        
+        @media (max-width: 767.98px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .section-padding {
+                padding: 50px 0;
+            }
+            
+            .cta-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-transparent position-fixed w-100" style="z-index: 1000;">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <span style="color: var(--primary-color);">Art</span>Oratoire
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/formation">Formation</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/bibliotheque">Bibliothèque</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Connexion</a>
+                    </li>
+                    <li class="nav-item ms-2">
+                        <a class="btn btn-register" href="/register">S'inscrire</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="hero-title">Maîtrisez l'Art de la Parole</h1>
+                    <p class="hero-subtitle">Développez vos compétences en communication orale et devenez un orateur confiant et persuasif grâce à notre formation complète.</p>
+                    <div class="d-flex gap-3">
+                        <a href="/register" class="btn btn-hero btn-hero-primary">Commencer maintenant</a>
+                        <a href="#about" class="btn btn-hero btn-hero-outline">En savoir plus</a>
+                    </div>
+                </div>
+                <div class="col-lg-6 d-none d-lg-block">
+                    <img src="/placeholder.svg?height=400&width=500" alt="Art Oratoire" class="img-fluid hero-image">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="section-padding" id="about">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-5 mb-lg-0">
+                    <img src="/placeholder.svg?height=400&width=500" alt="À propos de nous" class="img-fluid about-img">
+                </div>
+                <div class="col-lg-6">
+                    <h2 class="section-title">Pourquoi choisir notre formation ?</h2>
+                    <p class="mb-4">Notre formation en art oratoire est conçue pour vous aider à développer vos compétences en communication orale, à surmonter votre peur de parler en public et à devenir un orateur confiant et persuasif.</p>
+                    
+                    <div class="check-item">
+                        <div class="check-icon"><i class="fas fa-check"></i></div>
+                        <div>Formation complète avec certification</div>
+                    </div>
+                    <div class="check-item">
+                        <div class="check-icon"><i class="fas fa-check"></i></div>
+                        <div>Formateurs expérimentés et passionnés</div>
+                    </div>
+                    <div class="check-item">
+                        <div class="check-icon"><i class="fas fa-check"></i></div>
+                        <div>Exercices pratiques avec feedback IA</div>
+                    </div>
+                    <div class="check-item">
+                        <div class="check-icon"><i class="fas fa-check"></i></div>
+                        <div>Accès à une bibliothèque de ressources</div>
+                    </div>
+                    <div class="check-item">
+                        <div class="check-icon"><i class="fas fa-check"></i></div>
+                        <div>Communauté d'apprenants et de formateurs</div>
+                    </div>
+                    
+                    <a href="/register" class="btn btn-register mt-4">Rejoindre la formation</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section-padding bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Nos caractéristiques</h2>
+                <p class="section-subtitle">Découvrez ce qui rend notre formation unique</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="feature-icon mx-auto">
+                                <i class="fas fa-video"></i>
+                            </div>
+                            <h4 class="feature-title">Cours vidéo</h4>
+                            <p class="card-text">Accédez à des cours vidéo de haute qualité que vous pouvez suivre à votre rythme, où que vous soyez.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="feature-icon mx-auto">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <h4 class="feature-title">Analyse IA</h4>
+                            <p class="card-text">Notre technologie d'intelligence artificielle analyse vos performances et vous fournit un feedback personnalisé.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="feature-icon mx-auto">
+                                <i class="fas fa-certificate"></i>
+                            </div>
+                            <h4 class="feature-title">Certification</h4>
+                            <p class="card-text">Obtenez un certificat reconnu à la fin de votre formation pour valoriser vos nouvelles compétences.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="feature-icon mx-auto">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <h4 class="feature-title">Bibliothèque</h4>
+                            <p class="card-text">Accédez à une bibliothèque de romans africains et européens pour enrichir votre culture et votre vocabulaire.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="feature-icon mx-auto">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <h4 class="feature-title">Communication</h4>
+                            <p class="card-text">Échangez avec les formateurs et les autres apprenants pour partager vos expériences et poser vos questions.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="feature-icon mx-auto">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <h4 class="feature-title">Exercices pratiques</h4>
+                            <p class="card-text">Mettez en pratique vos compétences avec des exercices concrets et recevez un feedback personnalisé.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Témoignages</h2>
+                <p class="section-subtitle">Ce que nos apprenants disent de nous</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card testimonial-card h-100">
+                        <div class="card-body text-center p-4">
+                            <img src="/placeholder.svg?height=80&width=80" alt="Témoignage" class="testimonial-img">
+                            <h5 class="testimonial-name">Amadou Diallo</h5>
+                            <p class="testimonial-position">Entrepreneur</p>
+                            <p class="testimonial-text">"Cette formation a complètement transformé ma façon de communiquer. Je suis maintenant beaucoup plus confiant lors de mes présentations professionnelles."</p>
+                            <div class="star-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card testimonial-card h-100">
+                        <div class="card-body text-center p-4">
+                            <img src="/placeholder.svg?height=80&width=80" alt="Témoignage" class="testimonial-img">
+                            <h5 class="testimonial-name">Fatou Ndiaye</h5>
+                            <p class="testimonial-position">Enseignante</p>
+                            <p class="testimonial-text">"Les techniques apprises m'ont permis de captiver l'attention de mes élèves. Le feedback de l'IA a été particulièrement utile pour améliorer ma diction."</p>
+                            <div class="star-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card testimonial-card h-100">
+                        <div class="card-body text-center p-4">
+                            <img src="/placeholder.svg?height=80&width=80" alt="Témoignage" class="testimonial-img">
+                            <h5 class="testimonial-name">Kofi Mensah</h5>
+                            <p class="testimonial-position">Étudiant</p>
+                            <p class="testimonial-text">"J'avais une peur bleue de parler en public. Grâce à cette formation, j'ai pu surmonter cette peur et j'ai même remporté un concours d'éloquence !"</p>
+                            <div class="star-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container text-center">
+            <h2 class="cta-title">Prêt à développer vos compétences en art oratoire ?</h2>
+            <p class="cta-text">Inscrivez-vous dès maintenant et commencez votre parcours vers l'excellence en communication orale.</p>
+            <a href="/register" class="btn btn-cta">S'inscrire maintenant</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <h5 class="footer-title">ArtOratoire</h5>
+                    <p class="mb-4">Notre mission est de vous aider à développer vos compétences en communication orale et à devenir un orateur confiant et persuasif.</p>
+                    <div class="d-flex mb-4">
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <h5 class="footer-title">Liens rapides</h5>
+                    <a href="/" class="footer-link">Accueil</a>
+                    <a href="/formation" class="footer-link">Formation</a>
+                    <a href="/bibliotheque" class="footer-link">Bibliothèque</a>
+                    <a href="/login" class="footer-link">Connexion</a>
+                    <a href="/register" class="footer-link">Inscription</a>
+                </div>
+                <div class="col-lg-3">
+                    <h5 class="footer-title">Contact</h5>
+                    <div class="footer-contact">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>123 Rue de l'Éloquence, Dakar</span>
+                    </div>
+                    <div class="footer-contact">
+                        <i class="fas fa-phone"></i>
+                        <span>+221 77 123 45 67</span>
+                    </div>
+                    <div class="footer-contact">
+                        <i class="fas fa-envelope"></i>
+                        <span>contact@artoratoire.com</span>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <h5 class="footer-title">Newsletter</h5>
+                    <p class="mb-3">Abonnez-vous à notre newsletter pour recevoir nos dernières actualités et conseils.</p>
+                    <div class="input-group">
+                        <input type="email" class="form-control newsletter-input" placeholder="Votre email">
+                        <button class="btn newsletter-btn" type="button">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom text-center">
+                <p class="mb-0">&copy; 2023 ArtOratoire. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>

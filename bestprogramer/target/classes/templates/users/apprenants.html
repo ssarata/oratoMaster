@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Apprenants - Art Oratoire</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3a0ca3;
+            --secondary-color: #f72585;
+            --accent-color: #4cc9f0;
+            --dark-color: #2b2d42;
+            --light-color: #f8f9fa;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+        }
+        
+        .apprenant-card {
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .apprenant-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .apprenant-header {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+        
+        .apprenant-photo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid white;
+            object-fit: cover;
+            background-color: white;
+            margin-right: 15px;
+        }
+        
+        .apprenant-header-info {
+            flex: 1;
+        }
+        
+        .apprenant-name {
+            font-weight: 600;
+            margin-bottom: 0;
+            font-size: 1.1rem;
+        }
+        
+        .apprenant-since {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        
+        .apprenant-body {
+            padding: 20px;
+        }
+        
+        .progress {
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+        
+        .progress-bar {
+            background-color: var(--primary-color);
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        
+        .apprenant-stats {
+            display: flex;
+            justify-content: space-around;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        
+        .badge-level {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 0.7rem;
+            padding: 0.35em 0.65em;
+        }
+        
+        .badge-beginner {
+            background-color: #10b981;
+        }
+        
+        .badge-intermediate {
+            background-color: #f59e0b;
+        }
+        
+        .badge-advanced {
+            background-color: #ef4444;
+        }
+        
+        .apprenant-footer {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .apprenant-action {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .apprenant-action i {
+            margin-right: 5px;
+        }
+        
+        .apprenant-action:hover {
+            color: var(--secondary-color);
+        }
+        
+        .section-title {
+            position: relative;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+        
+        .filters {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <h1 class="section-title">Mes Apprenants</h1>
+        
+        <!-- Filtres optionnels -->
+        <div class="filters mb-4">
+            <div class="row">
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <label for="niveau" class="form-label">Niveau</label>
+                    <select id="niveau" class="form-select">
+                        <option value="">Tous les niveaux</option>
+                        <option value="Débutant">Débutant</option>
+                        <option value="Intermédiaire">Intermédiaire</option>
+                        <option value="Avancé">Avancé</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <label for="progression" class="form-label">Progression</label>
+                    <select id="progression" class="form-select">
+                        <option value="">Toutes les progressions</option>
+                        <option value="0-25">0-25%</option>
+                        <option value="26-50">26-50%</option>
+                        <option value="51-75">51-75%</option>
+                        <option value="76-100">76-100%</option>
+                    </select>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button class="btn btn-primary w-100">Filtrer</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Liste des apprenants -->
+        <div class="row g-4">
+            <!-- Boucle sur la liste des apprenants -->
+            <div th:each="apprenant : ${apprenants}" class="col-md-6 col-lg-4">
+                <div class="apprenant-card">
+                    <!-- Badge de niveau -->
+                
+                    <div class="apprenant-header">
+                        <img th:if="${apprenant.photo}" th:src="@{'/uploads/' + ${apprenant.photo}}" alt="Photo de l'apprenant" class="apprenant-photo">
+                        <img th:unless="${apprenant.photo}" src="/placeholder.svg?height=60&width=60" alt="Photo de l'apprenant" class="apprenant-photo">
+                        <div class="apprenant-header-info">
+                            <h5 class="apprenant-name" th:text="${apprenant.prenom + ' ' + apprenant.nom}">Nom de l'apprenant</h5>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div class="apprenant-footer">
+                        <a th:href="@{'/formateur/apprenant/' + ${apprenant.id}}" class="apprenant-action">
+                            <i class="fas fa-user"></i> Profil
+                        </a>
+                        <a th:href="@{'/formateur/apprenant/' + ${apprenant.id} + '/progression'}" class="apprenant-action">
+                            <i class="fas fa-chart-line"></i> Progression
+                        </a>
+                        <a th:href="@{'/messages/nouveau?destinataire=' + ${apprenant.id}}" class="apprenant-action">
+                            <i class="fas fa-envelope"></i> Message
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Message si aucun apprenant n'est trouvé -->
+            <div th:if="${#lists.isEmpty(apprenants)}" class="col-12 text-center py-5">
+                <i class="fas fa-user-graduate fa-3x text-muted mb-3"></i>
+                <h4>Aucun apprenant trouvé</h4>
+                <p class="text-muted">Aucun apprenant ne correspond à vos critères de recherche.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
