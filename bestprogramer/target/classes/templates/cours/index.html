@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/dashboard-layout :: head('Liste des Cours')">
+    <title>Liste des Cours</title>
+</head>
+<body>
+<header th:replace="fragments/dashboard-layout :: header"></header>
+<aside th:replace="fragments/dashboard-layout :: sidebar('cours')"></aside> 
+
+<main class="app-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="page-title">Liste des Cours</h1>
+        <div class="d-flex gap-2">
+            <a href="/cours/create" class="btn btn-primary btn-app">
+                <i class="fas fa-plus"></i>Créer un cours
+            </a>
+        </div>
+    </div>
+
+    <!-- Liste des cours -->
+    <div class="row">
+        <div th:if="${cours == null or #lists.isEmpty(cours)}" class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle me-2"></i>
+                Aucun cours disponible pour le moment.
+            </div>
+        </div>
+        <div class="col-12" th:each="cour : ${cours}">
+            <div class="app-card mb-4">
+                <div class="app-card-header">
+                    <h3 class="app-card-title" th:text="${cour.titre}">Titre du cours</h3>
+                    <div class="app-card-icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                </div>
+                <div class="app-card-body">
+                    <div class="course-content mb-4">
+                        <h4 class="mb-3">Description du cours</h4>
+                        <div class="course-description" th:utext="${cour.description}">Description du cours</div>
+                    </div>
+
+                    <!-- Quizzes du cours -->
+                    <div th:if="${cour.quizzes != null and !#lists.isEmpty(cour.quizzes)}">
+                        <div th:each="quiz, quizStat : ${cour.quizzes}" class="quiz-section mb-4">
+                            <h4 class="mb-3">
+                                <i class="fas fa-clipboard-list me-2"></i>
+                                Quiz #<span th:text="${quiz.id}">ID</span>
+                                <span class="badge bg-primary ms-2" th:if="${quiz.moyenne != null}">
+                                    Moyenne: <span th:text="${quiz.moyenne}">0</span>
+                                </span>
+                            </h4>
+
+                            <div class="quiz-notes mb-3" th:if="${quiz.notes != null and !quiz.notes.isEmpty()}">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Notes:</strong> <span th:text="${quiz.notes}">Notes du quiz</span>
+                                </div>
+                            </div>
+
+                            <!-- Questions du quiz -->
+                            <form th:id="'quiz-form-' + ${quiz.id}" class="quiz-form">
+                                <div th:if="${quiz.questions != null and !#lists.isEmpty(quiz.questions)}">
+                                    <div th:each="question, questionStat : ${quiz.questions}" class="question-item">
+                                        <h5 class="mb-3">
+                                            <span class="badge bg-secondary me-2" th:text="${questionStat.count}">1</span>
+                                            <span th:text="${question.question}">Intitulé de la question</span>
+                                        </h5>
+
+                                        <!-- Réponses de la question -->
+                                        <div th:if="${question.reponses != null and !#lists.isEmpty(question.reponses)}" class="answer-options">
+                                            <div th:each="reponse, repStat : ${question.reponses}"
+                                                 class="answer-option"
+                                                 th:data-points="${reponse.point}"
+                                                 th:onclick="|selectAnswer(this, ${quiz.id}, ${question.id}, ${reponse.id})|">
+                                                <input type="radio"
+                                                       th:name="'question-' + ${question.id}"
+                                                       th:id="'reponse-' + ${reponse.id}"
+                                                       th:value="${reponse.id}">
+                                                <label th:for="'reponse-' + ${reponse.id}" class="mb-0 w-100">
+                                                    <span th:text="${reponse.reponse}">Texte réponse</span>
+                                                    <span class="points-value d-none" th:text="${reponse.point}">0</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div th:if="${question.reponses == null or #lists.isEmpty(question.reponses)}" class="alert alert-warning">
+                                            <i class="fas fa-exclamation-triangle me-2"></i>
+                                            Aucune réponse disponible pour cette question.
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between mt-4">
+                                        <button type="button" class="btn btn-outline-primary btn-app" th:onclick="|resetQuiz(${quiz.id})|">
+                                            <i class="fas fa-redo me-2"></i>Réinitialiser
+                                        </button>
+                                        <button type="button" class="btn btn-primary btn-app" th:onclick="|submitQuiz(${quiz.id})|">
+                                            <i class="fas fa-check me-2"></i>Valider mes réponses
+                                        </button>
+                                    </div>
+
+                                    <div th:id="'quiz-result-' + ${quiz.id}" class="quiz-result mt-4 d-none">
+                                        <div class="alert alert-success">
+                                            <h5 class="alert-heading"><i class="fas fa-trophy me-2"></i>Résultat</h5>
+                                            <p>Vous avez obtenu <strong><span class="score">0</span> points</strong> sur ce quiz.</p>
+                                            <div class="progress mt-2" style="height: 10px;">
+                                                <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div th:if="${quiz.questions == null or #lists.isEmpty(quiz.questions)}" class="alert alert-warning">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    Ce quiz ne contient aucune question.
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div th:if="${cour.quizzes == null or #lists.isEmpty(cour.quizzes)}" class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Aucun quiz n'est disponible pour ce cours.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block th:replace="fragments/dashboard-layout :: scripts"></th:block>
+
+<script>
+    function selectAnswer(element, quizId, questionId, reponseId) {
+        const questionOptions = document.querySelectorAll(`input[name="question-${questionId}"]`);
+        questionOptions.forEach(option => {
+            option.parentElement.classList.remove('selected');
+        });
+
+        element.classList.add('selected');
+        const radioInput = element.querySelector('input[type="radio"]');
+        radioInput.checked = true;
+    }
+
+    function resetQuiz(quizId) {
+        const form = document.getElementById(`quiz-form-${quizId}`);
+        const radioInputs = form.querySelectorAll('input[type="radio"]');
+        radioInputs.forEach(input => {
+            input.checked = false;
+            input.parentElement.classList.remove('selected');
+        });
+
+        const resultDiv = document.getElementById(`quiz-result-${quizId}`);
+        resultDiv.classList.add('d-none');
+    }
+
+    function submitQuiz(quizId) {
+        const form = document.getElementById(`quiz-form-${quizId}`);
+        const questions = form.querySelectorAll('.question-item');
+        let totalPoints = 0;
+        let maxPoints = 0;
+
+        questions.forEach(question => {
+            const selectedAnswer = question.querySelector('input[type="radio"]:checked');
+            if (selectedAnswer) {
+                const answerOption = selectedAnswer.closest('.answer-option');
+                const points = parseFloat(answerOption.getAttribute('data-points') || 0);
+                totalPoints += points;
+            }
+
+            const allAnswers = question.querySelectorAll('.answer-option');
+            let questionMaxPoints = 0;
+            allAnswers.forEach(answer => {
+                const points = parseFloat(answer.getAttribute('data-points') || 0);
+                questionMaxPoints = Math.max(questionMaxPoints, points);
+            });
+            maxPoints += questionMaxPoints;
+        });
+
+        const resultDiv = document.getElementById(`quiz-result-${quizId}`);
+        resultDiv.classList.remove('d-none');
+
+        const scoreElement = resultDiv.querySelector('.score');
+        scoreElement.textContent = totalPoints.toFixed(1);
+
+        const progressBar = resultDiv.querySelector('.progress-bar');
+        const percentage = maxPoints > 0 ? (totalPoints / maxPoints) * 100 : 0;
+        progressBar.style.width = `${percentage}%`;
+        progressBar.setAttribute('aria-valuenow', percentage);
+
+        progressBar.classList.remove('bg-success', 'bg-warning', 'bg-danger');
+        if (percentage >= 80) {
+            progressBar.classList.add('bg-success');
+        } else if (percentage >= 50) {
+            progressBar.classList.add('bg-warning');
+        } else {
+            progressBar.classList.add('bg-danger');
+        }
+    }
+</script>
+</body>
+</html>

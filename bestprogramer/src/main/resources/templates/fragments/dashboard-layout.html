@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="fr">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' - Art Oratoire'">Art Oratoire</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4e2a84;
+            --secondary-color: #f72585;
+            --accent-color: #4cc9f0;
+            --dark-color: #2b2d42;
+            --light-color: #f8f9fa;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #3b82f6;
+            --gradient-primary: linear-gradient(135deg, #4e2a84, #7c4dff);
+            --gradient-secondary: linear-gradient(135deg, #f72585, #ff5a5f);
+            --sidebar-width: 280px;
+            --header-height: 70px;
+            --card-border-radius: 15px;
+            --box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header Styles */
+        .app-header {
+            height: var(--header-height);
+            background-color: white;
+            box-shadow: var(--box-shadow);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem;
+        }
+        
+        .app-logo {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--dark-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .app-logo span {
+            color: var(--primary-color);
+        }
+        
+        .header-search {
+            position: relative;
+            margin-left: 2rem;
+            flex: 1;
+            max-width: 400px;
+        }
+        
+        .header-search input {
+            border-radius: 30px;
+            padding-left: 40px;
+            border: 1px solid #e2e8f0;
+            background-color: #f8fafc;
+            transition: all 0.3s ease;
+        }
+        
+        .header-search input:focus {
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(78, 42, 132, 0.1);
+            border-color: var(--primary-color);
+        }
+        
+        .header-search i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+        }
+        
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            background-color: #f8fafc;
+            margin-left: 0.75rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .header-icon:hover {
+            background-color: #f1f5f9;
+            color: var(--primary-color);
+        }
+        
+        .header-icon .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 0.65rem;
+            background-color: var(--secondary-color);
+        }
+        
+        .user-dropdown {
+            margin-left: 1rem;
+        }
+        
+        .user-dropdown img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Sidebar Styles */
+        .app-sidebar {
+            width: var(--sidebar-width);
+            background-color: white;
+            box-shadow: var(--box-shadow);
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            bottom: 0;
+            z-index: 99;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-user {
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .sidebar-user-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            border: 3px solid white;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sidebar-user-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .sidebar-user-role {
+            color: #64748b;
+            font-size: 0.875rem;
+            text-transform: capitalize;
+        }
+        
+        .sidebar-menu {
+            padding: 1.5rem 0;
+        }
+        
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: #64748b;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .sidebar-link:hover {
+            color: var(--primary-color);
+            background-color: #f8fafc;
+        }
+        
+        .sidebar-link.active {
+            color: var(--primary-color);
+            background-color: #f1f5f9;
+            font-weight: 500;
+        }
+        
+        .sidebar-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--gradient-primary);
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .sidebar-icon {
+            width: 20px;
+            text-align: center;
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+        }
+        
+        .sidebar-link .badge {
+            margin-left: auto;
+            background-color: var(--secondary-color);
+        }
+        
+        /* Main Content Styles */
+        .app-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 2rem;
+            flex: 1;
+        }
+        
+        .page-title {
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--dark-color);
+        }
+        
+        /* Card Styles */
+        .app-card {
+            background-color: white;
+            border-radius: var(--card-border-radius);
+            box-shadow: var(--box-shadow);
+            transition: all 0.3s ease;
+            height: 100%;
+            border: none;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        
+        .app-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .app-card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .app-card-title {
+            font-weight: 600;
+            margin-bottom: 0;
+            color: var(--dark-color);
+        }
+        
+        .app-card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            background: var(--gradient-primary);
+            box-shadow: 0 5px 15px rgba(78, 42, 132, 0.2);
+        }
+        
+        .app-card-body {
+            padding: 1.5rem;
+        }
+        
+        .app-card-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #f1f5f9;
+        }
+        
+        /* Button Styles */
+        .btn-app {
+            padding: 0.6rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-app i {
+            margin-right: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+            box-shadow: 0 4px 15px rgba(78, 42, 132, 0.2);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(78, 42, 132, 0.3);
+        }
+        
+        .btn-outline-primary {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            background-color: transparent;
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        /* Course Styles */
+        .course-card {
+            border-radius: var(--card-border-radius);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .quiz-section {
+            background-color: #f8fafc;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .question-item {
+            background-color: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .answer-option {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .answer-option:hover {
+            background-color: #f1f5f9;
+        }
+        
+        .answer-option.selected {
+            background-color: rgba(78, 42, 132, 0.1);
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .answer-option input {
+            margin-right: 0.75rem;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 991.98px) {
+            :root {
+                --sidebar-width: 0px;
+            }
+            
+            .app-sidebar {
+                left: -280px;
+            }
+            
+            .app-sidebar.show {
+                left: 0;
+                width: 280px;
+            }
+            
+            .sidebar-toggle {
+                display: block;
+            }
+        }
+        
+        @media (min-width: 992px) {
+            .sidebar-toggle {
+                display: none;
+            }
+        }
+    </style>
+    <th:block th:replace="${extraStyles} ?: ~{}"></th:block>
+</head>
+<body>
+    <!-- Header -->
+    <header th:fragment="header" class="app-header">
+        <button class="sidebar-toggle btn btn-sm me-3 d-lg-none" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <a href="/" class="app-logo">
+            <span>Art</span>Oratoire
+        </a>
+        
+        <div class="header-search d-none d-md-block">
+            <i class="fas fa-search"></i>
+            <input type="text" class="form-control" placeholder="Rechercher...">
+        </div>
+        
+        <div class="header-actions">
+            <a href="#" class="header-icon">
+                <i class="fas fa-bell"></i>
+                <span class="badge rounded-pill">3</span>
+            </a>
+            
+            <a href="/messages" class="header-icon">
+                <i class="fas fa-envelope"></i>
+                <span th:if="${messagesNonLus > 0}" class="badge rounded-pill" th:text="${messagesNonLus}">2</span>
+            </a>
+            
+            <div class="dropdown user-dropdown">
+                <a class="dropdown-toggle d-flex align-items-center" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <!-- <img th:if="${user.photo}" th:src="@{'/uploads/' + ${user.photo}}" alt="Photo de profil"> -->
+                    <!-- <img th:unless="${user.photo}" src="/placeholder.svg?height=40&width=40" alt="Photo de profil"> -->
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item" href="/users/profile"><i class="fas fa-user me-2"></i>Profil</a></li>
+                    <li><a class="dropdown-item" href="/users/edit"><i class="fas fa-cog me-2"></i>Paramètres</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt me-2"></i>Déconnexion</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside th:fragment="sidebar(activeMenu)" class="app-sidebar" id="sidebar">
+        <div class="sidebar-user">
+            <!-- <img th:if="${user.photo}" th:src="@{'/uploads/' + ${user.photo}}" alt="Photo de profil" class="sidebar-user-img">
+            <img th:unless="${user.photo}" src="/placeholder.svg?height=80&width=80" alt="Photo de profil" class="sidebar-user-img">
+            <h5 class="sidebar-user-name" th:text="${user.prenom + ' ' + user.nom}">Utilisateur</h5>
+            <p class="sidebar-user-role" th:text="${user.role}">Utilisateur</p>
+        </div> -->
+        </div>
+        
+        
+        <nav class="sidebar-menu">
+            <a href="/dashboard" class="sidebar-link" th:classappend="${activeMenu == 'dashboard'} ? 'active' : ''">
+                <i class="fas fa-home sidebar-icon"></i> Tableau de bord
+            </a>
+            <a href="/formations" class="sidebar-link" th:classappend="${activeMenu == 'formations'} ? 'active' : ''">
+                <i class="fas fa-chalkboard-teacher sidebar-icon"></i> Formations
+            </a>
+            <a href="/users/listeFormateurs" class="sidebar-link" th:classappend="${activeMenu == 'formateurs'} ? 'active' : ''">
+                <i class="fas fa-chalkboard-teacher sidebar-icon"></i> Formateurs
+            </a>
+            <a href="/users/listeApprenants" class="sidebar-link" th:classappend="${activeMenu == 'apprenants'} ? 'active' : ''">
+                <i class="fas fa-user-graduate sidebar-icon"></i> Apprenants
+            </a>
+
+            <a href="/cours" class="sidebar-link" th:classappend="${activeMenu == 'cours'} ? 'active' : ''">
+                <i class="fas fa-book-open sidebar-icon"></i> Cours
+            </a>
+            <a href="/livres" class="sidebar-link" th:classappend="${activeMenu == 'bibliotheque'} ? 'active' : ''">
+                <i class="fas fa-book sidebar-icon"></i> Bibliothèque
+            </a>
+            <a href="/messages" class="sidebar-link" th:classappend="${activeMenu == 'messages'} ? 'active' : ''">
+                <i class="fas fa-comments sidebar-icon"></i> Messages
+                <span th:if="${messagesNonLus > 0}" class="badge rounded-pill" th:text="${messagesNonLus}">3</span>
+            </a>
+            <a href="/certificats" class="sidebar-link" th:classappend="${activeMenu == 'certificats'} ? 'active' : ''">
+                <i class="fas fa-certificate sidebar-icon"></i> certificats
+            </a>
+            
+           
+            <a href="/users/profile" class="sidebar-link" th:classappend="${activeMenu == 'profile'} ? 'active' : ''">
+                <i class="fas fa-user sidebar-icon"></i> Profil
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content Container -->
+    <main th:fragment="content(title)" class="app-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="page-title" th:text="${title}">Titre de la page</h1>
+            <div class="welcome-message">
+                <span>Bienvenue,</span>
+                <span class="fw-bold" th:text="${user.prenom}">Prénom</span>
+            </div>
+        </div>
+        
+        <th:block th:replace="${content}"></th:block>
+    </main>
+
+    <!-- Footer Scripts -->
+    <th:block th:fragment="scripts">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            // Sidebar toggle for mobile
+            document.addEventListener('DOMContentLoaded', function() {
+                const sidebarToggle = document.getElementById('sidebarToggle');
+                const sidebar = document.getElementById('sidebar');
+                
+                if (sidebarToggle) {
+                    sidebarToggle.addEventListener('click', function() {
+                        sidebar.classList.toggle('show');
+                    });
+                }
+                
+                // Close sidebar when clicking outside on mobile
+                document.addEventListener('click', function(event) {
+                    if (window.innerWidth < 992 && sidebar.classList.contains('show') && 
+                        !sidebar.contains(event.target) && event.target !== sidebarToggle) {
+                        sidebar.classList.remove('show');
+                    }
+                });
+            });
+        </script>
+        <th:block th:replace="${extraScripts} ?: ~{}"></th:block>
+    </th:block>
+</body>
+</html>

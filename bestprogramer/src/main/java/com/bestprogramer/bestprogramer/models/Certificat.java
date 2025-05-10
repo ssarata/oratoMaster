@@ -1,70 +1,45 @@
 package com.bestprogramer.bestprogramer.models;
 
-import jakarta.persistence.*;
-import lombok.*;
-import java.time.LocalDate;
-
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 @Entity
+@Table(name="certificats")
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Table(name = "certificats")
 public class Certificat {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	private String date;
+	private String mention;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	private int coursId;
+	private int userId;
+	public String getDate() {
+		return date;
+	}
+	public void setDate(String date) {
+		this.date = date;
+	}
+	public String getMention() {
+		return mention;
+	}
+	public void setMention(String mention) {
+		this.mention = mention;
+	}
+	public int getCoursId() {
+		return coursId;
+	}
+	public void setCoursId(int coursId) {
+		this.coursId = coursId;
+	}
+	public int getUserId() {
+		return userId;
+	}
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Column(nullable = false)
-    private String numero;
-
-    public void setNumero(String numero) {
-        this.numero = numero;
-    }
-
-    public String getNumero() {
-        return numero;
-    }
-
-    @Column(nullable = false)
-    private LocalDate dateEmission;
-
-    public LocalDate getDateEmission() {
-        return dateEmission;
-    }
-
-    public void setDateEmission(LocalDate dateEmission) {
-        this.dateEmission = dateEmission;
-    }
-
-    @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    @Column(nullable = false)
-    private String fichierPdf;
-
-    public String getFichierPdf() {
-        return fichierPdf;
-    }
-
-    public void setFichierPdf(String fichierPdf) {
-        this.fichierPdf = fichierPdf;
-    }
 }

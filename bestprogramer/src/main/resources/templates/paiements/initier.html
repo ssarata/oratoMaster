@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/dashboard-layout :: head('Paiement de la formation')">
+    <title>Paiement de la formation</title>
+</head>
+<body>
+<header th:replace="fragments/dashboard-layout :: header"></header>
+<aside th:replace="fragments/dashboard-layout :: sidebar('formations')"></aside> 
+
+<main class="app-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="page-title">Paiement de la formation</h1>
+        <a th:href="@{'/formations/' + ${formation.id}}" class="btn btn-outline-primary btn-app">
+            <i class="fas fa-arrow-left"></i>Retour
+        </a>
+    </div>
+
+    <div class="app-card">
+        <div class="app-card-header">
+            <h3 class="app-card-title">Choisir votre méthode de paiement</h3>
+            <div class="app-card-icon">
+                <i class="fas fa-credit-card"></i>
+            </div>
+        </div>
+        <div class="app-card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4 class="mb-3">Récapitulatif</h4>
+                    <table class="table">
+                        <tr>
+                            <th style="width: 40%">Formation</th>
+                            <td th:text="${formation.titre}">Titre de la formation</td>
+                        </tr>
+                        <tr>
+                            <th>Montant à payer</th>
+                            <td>
+                                <span class="fw-bold" th:text="${#numbers.formatDecimal(formation.prix, 0, 'COMMA', 0, 'POINT')}">50000</span> FCFA
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Numéro de téléphone</th>
+                            <td th:text="${telephone}">90123456</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <h4 class="mb-3">Méthodes de paiement disponibles</h4>
+                    <form th:action="@{'/paiements/initier/' + ${inscription.id}}" method="post">
+                        <input type="hidden" name="telephone" th:value="${telephone}">
+                        
+                        <div class="payment-methods">
+                            <div class="form-check payment-method-item mb-3 p-3 border rounded">
+                                <input class="form-check-input" type="radio" name="methode" id="tmoney" value="T-Money" checked>
+                                <label class="form-check-label d-flex align-items-center" for="tmoney">
+                                    <img src="/placeholder.svg?height=40&width=40" alt="T-Money" class="me-3">
+                                    <div>
+                                        <div class="fw-bold">T-Money</div>
+                                        <div class="text-muted small">Paiement via T-Money</div>
+                                    </div>
+                                </label>
+                            </div>
+                            
+                            <div class="form-check payment-method-item mb-3 p-3 border rounded">
+                                <input class="form-check-input" type="radio" name="methode" id="flooz" value="Flooz">
+                                <label class="form-check-label d-flex align-items-center" for="flooz">
+                                    <img src="/placeholder.svg?height=40&width=40" alt="Flooz" class="me-3">
+                                    <div>
+                                        <div class="fw-bold">Flooz</div>
+                                        <div class="text-muted small">Paiement via Flooz</div>
+                                    </div>
+                                </label>
+                            </div>
+                            
+                            <div class="form-check payment-method-item mb-3 p-3 border rounded">
+                                <input class="form-check-input" type="radio" name="methode" id="carte" value="Carte bancaire">
+                                <label class="form-check-label d-flex align-items-center" for="carte">
+                                    <img src="/placeholder.svg?height=40&width=40" alt="Carte bancaire" class="me-3">
+                                    <div>
+                                        <div class="fw-bold">Carte bancaire</div>
+                                        <div class="text-muted small">Visa, Mastercard, etc.</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info mt-3">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Vous serez redirigé vers la plateforme de paiement sécurisée après avoir cliqué sur "Procéder au paiement".
+                        </div>
+                        
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-lock me-2"></i>Procéder au paiement
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block th:replace="fragments/dashboard-layout :: scripts"></th:block>
+</body>
+</html>

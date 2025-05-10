@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/dashboard-layout :: head('Mes inscriptions')">
+    <title>Mes inscriptions</title>
+</head>
+<body>
+<header th:replace="fragments/dashboard-layout :: header"></header>
+<aside th:replace="fragments/dashboard-layout :: sidebar('inscriptions')"></aside> 
+
+<main class="app-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="page-title" th:if="${user.role == 'apprenant'}">Mes inscriptions</h1>
+        <h1 class="page-title" th:if="${user.role == 'formateur'}">Inscriptions à mes formations</h1>
+        <h1 class="page-title" th:if="${user.role == 'admin'}">Toutes les inscriptions</h1>
+        <a href="/formations" class="btn btn-outline-primary btn-app">
+            <i class="fas fa-graduation-cap me-2"></i>Voir les formations
+        </a>
+    </div>
+
+    <!-- Alerte de succès -->
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${success}">Opération réussie !</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Alerte d'erreur -->
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${error}">Une erreur est survenue.</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Pour les apprenants et admins -->
+    <div th:if="${user.role == 'apprenant' || user.role == 'admin'}" class="app-card mb-4">
+        <div class="app-card-header">
+            <h3 class="app-card-title">Liste des inscriptions</h3>
+            <div class="app-card-icon">
+                <i class="fas fa-list"></i>
+            </div>
+        </div>
+        <div class="app-card-body">
+            <div th:if="${inscriptions == null or #lists.isEmpty(inscriptions)}" class="alert alert-info text-center">
+                <i class="fas fa-info-circle me-2"></i>
+                Aucune inscription trouvée.
+            </div>
+            <div th:if="${inscriptions != null and !#lists.isEmpty(inscriptions)}">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Formation</th>
+                                <th>Date d'inscription</th>
+                                <th>Statut</th>
+                                <th>Paiement</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="inscription : ${inscriptions}">
+                                <td>
+                                    <a th:href="@{'/formations/' + ${inscription.formation.id}}" th:text="${inscription.formation.titre}">
+                                        Titre de la formation
+                                    </a>
+                                </td>
+                                <td th:text="${#temporals.format(inscription.dateInscription, 'dd/MM/yyyy')}">01/01/2023</td>
+                                <td>
+                                    <span th:if="${inscription.statut == 'En attente'}" class="badge bg-warning">En attente</span>
+                                    <span th:if="${inscription.statut == 'Confirmé'}" class="badge bg-success">Confirmé</span>
+                                    <span th:if="${inscription.statut == 'Annulé'}" class="badge bg-danger">Annulé</span>
+                                </td>
+                                <td>
+                                    <span th:if="${inscription.paiement != null && inscription.paiement.statut == 'Confirmé'}" class="badge bg-success">Payé</span>
+                                    <span th:if="${inscription.paiement != null && inscription.paiement.statut == 'En attente'}" class="badge bg-warning">En attente</span>
+                                    <span th:if="${inscription.paiement != null && inscription.paiement.statut == 'Échoué'}" class="badge bg-danger">Échoué</span>
+                                    <span th:if="${inscription.paiement == null}" class="badge bg-secondary">Non initié</span>
+                                </td>
+                                <td>
+                                    <a th:if="${inscription.statut != 'Annulé'}" th:href="@{'/inscriptions/annuler/' + ${inscription.id}}" 
+                                       class="btn btn-sm btn-outline-danger" 
+                                       onclick="return confirm('Êtes-vous sûr de vouloir annuler cette inscription ?')">
+                                        <i class="fas fa-times"></i> Annuler
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pour les formateurs -->
+    <div th:if="${user.role == 'formateur' && formations != null}" th:each="formation : ${formations}" class="app-card mb-4">
+        <div class="app-card-header">
+            <h3 class="app-card-title" th:text="${formation.titre}">Titre de la formation</h3>
+            <div class="app-card-icon">
+                <i class="fas fa-users"></i>
+            </div>
+        </div>
+        <div class="app-card-body">
+            <div th:if="${formation.inscriptions == null or #lists.isEmpty(formation.inscriptions)}" class="alert alert-info text-center">
+                <i class="fas fa-info-circle me-2"></i>
+                Aucune inscription pour cette formation.
+            </div>
+            <div th:if="${formation.inscriptions != null and !#lists.isEmpty(formation.inscriptions)}">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Apprenant</th>
+                                <th>Date d'inscription</th>
+                                <th>Statut</th>
+                                <th>Paiement</th>
+                                <th>Contact</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="inscription : ${formation.inscriptions}">
+                                <td th:text="${inscription.apprenant.prenom + ' ' + inscription.apprenant.nom}">Nom de l'apprenant</td>
+                                <td th:text="${#temporals.format(inscription.dateInscription, 'dd/MM/yyyy')}">01/01/2023</td>
+                                <td>
+                                    <span th:if="${inscription.statut == 'En attente'}" class="badge bg-warning">En attente</span>
+                                    <span th:if="${inscription.statut == 'Confirmé'}" class="badge bg-success">Confirmé</span>
+                                    <span th:if="${inscription.statut == 'Annulé'}" class="badge bg-danger">Annulé</span>
+                                </td>
+                                <td>
+                                    <span th:if="${inscription.paiement != null && inscription.paiement.statut == 'Confirmé'}" class="badge bg-success">Payé</span>
+                                    <span th:if="${inscription.paiement != null && inscription.paiement.statut == 'En attente'}" class="badge bg-warning">En attente</span>
+                                    <span th:if="${inscription.paiement != null && inscription.paiement.statut == 'Échoué'}" class="badge bg-danger">Échoué</span>
+                                    <span th:if="${inscription.paiement == null}" class="badge bg-secondary">Non initié</span>
+                                </td>
+                                <td>
+                                    <a th:if="${inscription.apprenant.contact != null}" th:href="'tel:' + ${inscription.apprenant.contact}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-phone"></i> <span th:text="${inscription.apprenant.contact}">Contact</span>
+                                    </a>
+                                    <span th:if="${inscription.apprenant.contact == null}" class="text-muted">Non renseigné</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block th:replace="fragments/dashboard-layout :: scripts"></th:block>
+</body>
+</html>

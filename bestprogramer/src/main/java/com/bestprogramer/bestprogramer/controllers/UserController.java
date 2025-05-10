@@ -32,7 +32,7 @@ public class UserController {
     @GetMapping("/listeFormateurs")
     public String listTrainers(Model model) {
         List<User> formateurs = userService.getUsersByRole("formateur");
-        model.addAttribute("formateurs", formateurs);
+        model.addAttribute("users", formateurs);
         return "users/formateurs";
     }
     @GetMapping
@@ -46,7 +46,7 @@ public class UserController {
     @GetMapping("/listeApprenants")
     public String listStudents(Model model) {
         List<User> apprenants = userService.getUsersByRole("apprenant");
-        model.addAttribute("apprenants", apprenants);
+        model.addAttribute("users", apprenants);
         return "users/apprenants";
     }
 

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/dashboard-layout :: head('Bibliothèque')">
+    <title>Bibliothèque</title>
+</head>
+<body>
+<header th:replace="fragments/dashboard-layout :: header"></header>
+<aside th:replace="fragments/dashboard-layout :: sidebar('bibliotheque')"></aside> 
+
+<main class="app-content">
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="page-title">Bibliothèque</h1>
+            <div class="d-flex gap-2">
+                <a href="/livres/create" class="btn btn-primary btn-app">
+                    <i class="fas fa-plus me-2"></i>Ajouter un livre
+                </a>
+            </div>
+        </div>
+        
+        <!-- Filtres -->
+        <div class="app-card mb-4">
+            <div class="app-card-body">
+                <form action="/livres" method="get" class="row g-3">
+                    <div class="col-md-4">
+                        <label for="search" class="form-label">Rechercher par titre</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            <input type="text" class="form-control" id="search" name="search" 
+                                   placeholder="Entrez le titre du livre..." th:value="${searchTerm}">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="categorie" class="form-label">Catégorie</label>
+                        <select class="form-select" id="categorie" name="categorie">
+                            <option value="">Toutes les catégories</option>
+                            <option value="Roman" th:selected="${param.categorie == 'Roman'}">Roman</option>
+                            <option value="Essai" th:selected="${param.categorie == 'Essai'}">Essai</option>
+                            <option value="Poésie" th:selected="${param.categorie == 'Poésie'}">Poésie</option>
+                            <option value="Théâtre" th:selected="${param.categorie == 'Théâtre'}">Théâtre</option>
+                            <option value="Technique" th:selected="${param.categorie == 'Technique'}">Technique</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="origine" class="form-label">Origine</label>
+                        <select class="form-select" id="origine" name="origine">
+                            <option value="">Toutes les origines</option>
+                            <option value="Africaine" th:selected="${param.origine == 'Africaine'}">Africaine</option>
+                            <option value="Européenne" th:selected="${param.origine == 'Européenne'}">Européenne</option>
+                            <option value="Américaine" th:selected="${param.origine == 'Américaine'}">Américaine</option>
+                            <option value="Asiatique" th:selected="${param.origine == 'Asiatique'}">Asiatique</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-filter me-2"></i>Filtrer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Message de résultats de recherche -->
+        <div class="alert alert-info mt-3" th:if="${searchTerm != null && searchTerm != ''}">
+            <i class="fas fa-info-circle me-2"></i>
+            Résultats de recherche pour: <strong th:text="${searchTerm}"></strong>
+            <a href="/livres" class="btn btn-sm btn-outline-secondary ms-3">
+                <i class="fas fa-times me-1"></i> Effacer la recherche
+            </a>
+        </div>
+        
+        <!-- Liste des livres -->
+        <div class="row g-4">
+            <div th:if="${#lists.isEmpty(livres)}" class="col-12 text-center py-5">
+                <i class="fas fa-book fa-3x text-muted mb-3"></i>
+                <h4>Aucun livre trouvé</h4>
+                <p class="text-muted">Aucun livre ne correspond à vos critères de recherche ou la bibliothèque est vide.</p>
+                <a href="/livres/create" class="btn btn-primary mt-3">
+                    <i class="fas fa-plus me-2"></i>Ajouter un livre
+                </a>
+            </div>
+            
+            <!-- Boucle sur la liste des livres -->
+            <div th:each="livre : ${livres}" class="col-md-6 col-lg-4 col-xl-3">
+                <div class="card h-100 book-card">
+                    <div class="book-preview">
+                        <div class="pdf-preview" th:attr="data-pdf-url=@{'/livres/view/' + ${livre.id}}">
+                            <!-- Aperçu PDF généré par JS -->
+                            <div class="pdf-placeholder">
+                                <i class="fas fa-file-pdf fa-3x text-danger"></i>
+                                <span>Aperçu PDF</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${livre.titre}">Titre du livre</h5>
+                        <p class="card-text text-muted" th:if="${livre.auteur}" th:text="${'Par ' + livre.auteur}">Par Auteur</p>
+                        <p class="card-text" th:if="${livre.description}" th:text="${#strings.abbreviate(livre.description, 100)}">Description du livre...</p>
+                        
+                        <div class="book-meta">
+                            <span class="badge bg-primary" th:if="${livre.categorie}" th:text="${livre.categorie}">Catégorie</span>
+                            <span class="badge bg-secondary" th:if="${livre.origine}" th:text="${livre.origine}">Origine</span>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white border-top-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a th:href="@{'/livres/view/' + ${livre.id}}" class="btn btn-sm btn-primary" target="_blank">
+                                <i class="fas fa-eye me-1"></i> Lire
+                            </a>
+                            <a th:href="@{'/livres/download/' + ${livre.id}}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-download me-1"></i> Télécharger
+                            </a>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" th:href="@{'/livres/edit/' + ${livre.id}}"><i class="fas fa-edit me-2"></i>Modifier</a></li>
+                                    <li><a class="dropdown-item text-danger" href="#" th:data-livre-id="${livre.id}" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="fas fa-trash-alt me-2"></i>Supprimer</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pagination -->
+        <nav th:if="${totalPages > 1}" class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                    <a class="page-link" th:href="@{/livres(page=${currentPage - 1}, search=${param.search}, categorie=${param.categorie}, origine=${param.origine})}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${currentPage == i} ? 'active'">
+                    <a class="page-link" th:href="@{/livres(page=${i}, search=${param.search}, categorie=${param.categorie}, origine=${param.origine})}" th:text="${i + 1}">1</a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                    <a class="page-link" th:href="@{/livres(page=${currentPage + 1}, search=${param.search}, categorie=${param.categorie}, origine=${param.origine})}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    
+    <!-- Modal de confirmation de suppression -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmer la suppression</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir supprimer ce livre ? Cette action est irréversible.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <a href="#" id="confirmDelete" class="btn btn-danger">Supprimer</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block th:replace="fragments/dashboard-layout :: scripts"></th:block>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+<style>
+    .book-card {
+        transition: all 0.3s ease;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .book-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .book-preview {
+        height: 200px;
+        background-color: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .pdf-preview {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+    
+    .pdf-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        color: #6c757d;
+    }
+    
+    .pdf-canvas {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+    
+    .book-meta {
+        margin-top: 15px;
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Configuration de PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
+        
+        // Gestion de la suppression
+        const deleteModal = document.getElementById('deleteModal');
+        if (deleteModal) {
+            deleteModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const livreId = button.getAttribute('data-livre-id');
+                const confirmDeleteLink = document.getElementById('confirmDelete');
+                confirmDeleteLink.href = '/livres/delete/' + livreId;
+            });
+        }
+        
+        // Génération des aperçus PDF
+        const pdfPreviews = document.querySelectorAll('.pdf-preview');
+        pdfPreviews.forEach(preview => {
+            const pdfUrl = preview.getAttribute('data-pdf-url');
+            if (pdfUrl) {
+                // Charger la première page du PDF comme aperçu
+                pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf) {
+                    return pdf.getPage(1);
+                }).then(function(page) {
+                    const viewport = page.getViewport({ scale: 0.5 });
+                    const canvas = document.createElement('canvas');
+                    canvas.className = 'pdf-canvas';
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+                    
+                    const context = canvas.getContext('2d');
+                    const renderContext = {
+                        canvasContext: context,
+                        viewport: viewport
+                    };
+                    
+                    // Remplacer le placeholder par le canvas
+                    preview.innerHTML = '';
+                    preview.appendChild(canvas);
+                    
+                    return page.render(renderContext).promise;
+                }).catch(function(error) {
+                    console.error('Erreur lors du chargement du PDF:', error);
+                });
+            }
+        });
+        
+        // Ouvrir le PDF en plein écran au clic
+        pdfPreviews.forEach(preview => {
+            preview.addEventListener('click', function() {
+                const pdfUrl = this.getAttribute('data-pdf-url');
+                if (pdfUrl) {
+                    window.open(pdfUrl, '_blank');
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

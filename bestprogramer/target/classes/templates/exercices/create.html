@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/dashboard-layout}">
+<head>
+    <title>Créer un exercice pratique - Art Oratoire</title>
+    <style>
+        .video-preview {
+            width: 100%;
+            max-height: 400px;
+            border-radius: 8px;
+            display: none;
+            margin-top: 20px;
+        }
+        .recording-container {
+            position: relative;
+            width: 100%;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .recording-container.active {
+            border-color: #dc3545;
+            background-color: rgba(220, 53, 69, 0.1);
+        }
+        .recording-timer {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .recording-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .recording-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #dc3545;
+            margin-right: 10px;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .consigne-container {
+            background-color: #f8f9fa;
+            border-left: 4px solid #4e73df;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container-fluid">
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                <h1 class="h3 mb-0 text-gray-800">Créer un exercice pratique</h1>
+                <a href="/exercices" class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm">
+                    <i class="fas fa-arrow-left fa-sm text-white-50"></i> Retour aux exercices
+                </a>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">Nouvel exercice d'art oratoire</h6>
+                        </div>
+                        <div class="card-body">
+                            <!-- Formulaire de création d'exercice -->
+                            <form th:action="@{/exercices/create}" method="post" enctype="multipart/form-data">
+                                <!-- Informations de base -->
+                                <div class="form-group">
+                                    <label for="titre">Titre de l'exercice *</label>
+                                    <input type="text" class="form-control" id="titre" name="titre" required
+                                           placeholder="Ex: Présentation professionnelle en 3 minutes">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="description">Description *</label>
+                                    <textarea class="form-control" id="description" name="description" rows="3" required
+                                              placeholder="Décrivez votre exercice, son objectif et ce que vous souhaitez améliorer..."></textarea>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="categorie">Catégorie</label>
+                                            <select class="form-control" id="categorie" name="categorie">
+                                                <option value="">Sélectionnez une catégorie</option>
+                                                <option value="discours">Discours</option>
+                                                <option value="presentation">Présentation</option>
+                                                <option value="debat">Débat</option>
+                                                <option value="improvisation">Improvisation</option>
+                                                <option value="storytelling">Storytelling</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="duree">Durée (en minutes)</label>
+                                            <input type="number" class="form-control" id="duree" name="duree" min="1" max="60">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="consigne">Consigne pour l'analyse Gemini</label>
+                                    <textarea class="form-control" id="consigne" name="consigne" rows="2"
+                                              placeholder="Instructions spécifiques pour l'analyse IA (optionnel)"></textarea>
+                                    <small class="form-text text-muted">
+                                        Précisez ce sur quoi vous souhaitez que Gemini se concentre lors de l'analyse (posture, ton, gestuelle, etc.)
+                                    </small>
+                                </div>
+                                
+                                <!-- Enregistrement vidéo -->
+                                <div class="recording-container" id="recordingContainer">
+                                    <h5>Enregistrer votre vidéo</h5>
+                                    <p class="text-muted">Utilisez votre webcam pour enregistrer directement votre exercice d'art oratoire</p>
+                                    
+                                    <div id="recordingStatus" style="display: none;">
+                                        <span class="recording-indicator"></span> Enregistrement en cours...
+                                        <div class="recording-timer" id="recordingTimer">00:00</div>
+                                    </div>
+                                    
+                                    <div class="recording-controls">
+                                        <button type="button" id="startRecording" class="btn btn-primary">
+                                            <i class="fas fa-video"></i> Démarrer l'enregistrement
+                                        </button>
+                                        <button type="button" id="stopRecording" class="btn btn-danger" style="display: none;">
+                                            <i class="fas fa-stop-circle"></i> Arrêter
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Prévisualisation vidéo -->
+                                <video id="videoPreview" class="video-preview" controls></video>
+                                
+                                <!-- Upload de fichier vidéo -->
+                                <div class="form-group mt-4">
+                                    <label for="videoFile">Ou téléchargez une vidéo</label>
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" id="videoFile" name="videoFile" 
+                                               accept="video/*">
+                                        <label class="custom-file-label" for="videoFile">Choisir un fichier</label>
+                                    </div>
+                                    <small class="form-text text-muted">
+                                        Formats acceptés: MP4, WebM, MOV. Taille maximale: 100 MB
+                                    </small>
+                                </div>
+                                
+                                <!-- Options de partage -->
+                                <div class="form-group mt-4">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="publique" name="publique" value="true">
+                                        <label class="custom-control-label" for="publique">
+                                            Rendre cet exercice public pour que d'autres apprenants puissent s'en inspirer
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Bouton de soumission -->
+                                <button type="submit" class="btn btn-success btn-block mt-4">
+                                    <i class="fas fa-paper-plane"></i> Soumettre l'exercice pour analyse
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <!-- Conseils pour un bon exercice -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Conseils pour réussir</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="consigne-container mb-3">
+                                <h6><i class="fas fa-lightbulb text-warning"></i> Préparez votre environnement</h6>
+                                <p class="small">Choisissez un endroit calme, bien éclairé et avec un fond neutre pour votre enregistrement.</p>
+                            </div>
+                            
+                            <div class="consigne-container mb-3">
+                                <h6><i class="fas fa-microphone text-info"></i> Soignez votre audio</h6>
+                                <p class="small">Assurez-vous que votre voix est claire et audible. Évitez les bruits de fond.</p>
+                            </div>
+                            
+                            <div class="consigne-container mb-3">
+                                <h6><i class="fas fa-user text-success"></i> Posture et présence</h6>
+                                <p class="small">Tenez-vous droit, regardez la caméra et soyez conscient de votre langage corporel.</p>
+                            </div>
+                            
+                            <div class="consigne-container">
+                                <h6><i class="fas fa-clock text-danger"></i> Respectez le temps</h6>
+                                <p class="small">Un bon exercice d'art oratoire est concis et va droit au but. Visez entre 2 et 5 minutes.</p>
+                            </div>
+                            
+                            <hr>
+                            
+                            <h6 class="font-weight-bold">Comment fonctionne l'analyse Gemini?</h6>
+                            <p class="small">
+                                Notre IA analysera votre vidéo et vous fournira des commentaires sur:
+                            </p>
+                            <ul class="small">
+                                <li>Votre posture et langage corporel</li>
+                                <li>Votre diction et ton de voix</li>
+                                <li>Votre structure et clarté du discours</li>
+                                <li>Votre capacité à capter l'attention</li>
+                                <li>Des suggestions d'amélioration personnalisées</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Script pour l'enregistrement vidéo -->
+        <script th:inline="javascript">
+            document.addEventListener('DOMContentLoaded', function() {
+                const startButton = document.getElementById('startRecording');
+                const stopButton = document.getElementById('stopRecording');
+                const videoPreview = document.getElementById('videoPreview');
+                const recordingContainer = document.getElementById('recordingContainer');
+                const recordingStatus = document.getElementById('recordingStatus');
+                const recordingTimer = document.getElementById('recordingTimer');
+                const videoFileInput = document.getElementById('videoFile');
+                
+                let mediaRecorder;
+                let recordedChunks = [];
+                let timerInterval;
+                let seconds = 0;
+                
+                // Fonction pour mettre à jour le timer
+                function updateTimer() {
+                    seconds++;
+                    const minutes = Math.floor(seconds / 60);
+                    const remainingSeconds = seconds % 60;
+                    recordingTimer.textContent = `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+                }
+                
+                // Démarrer l'enregistrement
+                startButton.addEventListener('click', async function() {
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                        videoPreview.srcObject = stream;
+                        videoPreview.style.display = 'block';
+                        videoPreview.play();
+                        
+                        mediaRecorder = new MediaRecorder(stream);
+                        recordedChunks = [];
+                        
+                        mediaRecorder.ondataavailable = function(e) {
+                            if (e.data.size > 0) {
+                                recordedChunks.push(e.data);
+                            }
+                        };
+                        
+                        mediaRecorder.onstop = function() {
+                            const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                            videoPreview.srcObject = null;
+                            videoPreview.src = URL.createObjectURL(blob);
+                            
+                            // Créer un fichier à partir du blob pour l'upload
+                            const file = new File([blob], "recorded-video.webm", { type: 'video/webm' });
+                            
+                            // Créer un objet DataTransfer pour simuler un fichier sélectionné
+                            const dataTransfer = new DataTransfer();
+                            dataTransfer.items.add(file);
+                            videoFileInput.files = dataTransfer.files;
+                            
+                            // Mettre à jour le label du fichier
+                            const fileLabel = videoFileInput.nextElementSibling;
+                            fileLabel.textContent = file.name;
+                            
+                            // Arrêter tous les tracks du stream
+                            stream.getTracks().forEach(track => track.stop());
+                        };
+                        
+                        // Démarrer l'enregistrement
+                        mediaRecorder.start();
+                        
+                        // Mettre à jour l'interface
+                        startButton.style.display = 'none';
+                        stopButton.style.display = 'inline-block';
+                        recordingContainer.classList.add('active');
+                        recordingStatus.style.display = 'block';
+                        
+                        // Démarrer le timer
+                        seconds = 0;
+                        updateTimer();
+                        timerInterval = setInterval(updateTimer, 1000);
+                        
+                    } catch (err) {
+                        console.error("Erreur lors de l'accès à la caméra:", err);
+                        alert("Impossible d'accéder à votre caméra. Veuillez vérifier les permissions.");
+                    }
+                });
+                
+                // Arrêter l'enregistrement
+                stopButton.addEventListener('click', function() {
+                    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                        mediaRecorder.stop();
+                        
+                        // Mettre à jour l'interface
+                        stopButton.style.display = 'none';
+                        startButton.style.display = 'inline-block';
+                        startButton.textContent = 'Recommencer';
+                        recordingContainer.classList.remove('active');
+                        recordingStatus.style.display = 'none';
+                        
+                        // Arrêter le timer
+                        clearInterval(timerInterval);
+                    }
+                });
+                
+                // Prévisualiser le fichier vidéo sélectionné
+                videoFileInput.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        const file = this.files[0];
+                        const fileURL = URL.createObjectURL(file);
+                        
+                        videoPreview.srcObject = null;
+                        videoPreview.src = fileURL;
+                        videoPreview.style.display = 'block';
+                        
+                        // Mettre à jour le label du fichier
+                        const fileLabel = this.nextElementSibling;
+                        fileLabel.textContent = file.name;
+                    }
+                });
+            });
+        </script>
+    </div>
+</body>
+</html>

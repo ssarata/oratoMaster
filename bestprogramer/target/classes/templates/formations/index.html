@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/dashboard-layout :: head('Formations')">
+    <title>Formations</title>
+</head>
+<body>
+<header th:replace="fragments/dashboard-layout :: header"></header>
+<aside th:replace="fragments/dashboard-layout :: sidebar('formations')"></aside> 
+
+<main class="app-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="page-title">Formations</h1>
+        <div class="d-flex gap-2" th:if="${user.role == 'formateur' || user.role == 'admin'}">
+            <a href="/formations/create" class="btn btn-primary btn-app">
+                <i class="fas fa-plus"></i>Créer une formation
+            </a>
+        </div>
+    </div>
+
+    <!-- Alerte de succès -->
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${success}">Opération réussie !</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Alerte d'erreur -->
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${error}">Une erreur est survenue.</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Liste des formations -->
+    <div class="row">
+        <div th:if="${formations == null or #lists.isEmpty(formations)}" class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle me-2"></i>
+                Aucune formation disponible pour le moment.
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-4" th:each="formation : ${formations}">
+            <div class="app-card h-100">
+                <div class="app-card-header">
+                    <h3 class="app-card-title" th:text="${formation.titre}">Titre de la formation</h3>
+                    <div class="app-card-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                </div>
+                <div class="app-card-body">
+                    <div class="mb-3">
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-map-marker-alt me-2"></i>
+                            <span th:text="${formation.lieu}">Lieu</span>
+                        </p>
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-calendar-alt me-2"></i>
+                            Du <span th:text="${#temporals.format(formation.dateDebut, 'dd/MM/yyyy')}">01/01/2023</span>
+                            au <span th:text="${#temporals.format(formation.dateFin, 'dd/MM/yyyy')}">15/01/2023</span>
+                        </p>
+                        <p class="text-muted mb-3">
+                            <i class="fas fa-money-bill-wave me-2"></i>
+                            <span th:text="${formation.prix}">50000</span> FCFA
+                        </p>
+                    </div>
+                    <p class="mb-4" th:text="${#strings.abbreviate(formation.description, 150)}">Description de la formation...</p>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a th:href="@{'/formations/' + ${formation.id}}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-eye me-1"></i> Détails
+                        </a>
+                    
+                        <!-- Boutons pour formateur/admin -->
+                        <div th:if="${user != null && (user.role == 'formateur' || user.role == 'admin')}">
+                            <a th:href="@{'/formations/edit/' + ${formation.id}}" class="btn btn-outline-secondary btn-sm me-1">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a th:href="@{'/formations/delete/' + ${formation.id}}" class="btn btn-outline-danger btn-sm" 
+                               onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette formation ?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                        
+                        <!-- Bouton d'inscription pour apprenant -->
+                        <div th:if="${user != null && user.role == 'apprenant'}">
+                            <a th:if="${inscriptions == null || !inscriptions.stream().anyMatch(i -> i.formation.id == formation.id)}"
+                               th:href="@{'/inscriptions/formation/' + ${formation.id}}" 
+                               class="btn btn-primary btn-sm">
+                                <i class="fas fa-sign-in-alt me-1"></i> S'inscrire
+                            </a>
+                            <span th:if="${inscriptions != null && inscriptions.stream().anyMatch(i -> i.formation.id == formation.id)}"
+                                  class="badge bg-success">Inscrit</span>
+                        </div>
+                        
+                        <!-- Bouton pour utilisateurs non connectés -->
+                        <div th:if="${user == null}">
+                            <a href="/login" class="btn btn-primary btn-sm">
+                                <i class="fas fa-sign-in-alt me-1"></i> Se connecter pour s'inscrire
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block th:replace="fragments/dashboard-layout :: scripts"></th:block>
+</body>
+</html>

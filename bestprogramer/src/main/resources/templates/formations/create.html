@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/dashboard-layout :: head('Créer une formation')">
+    <title>Créer une formation</title>
+</head>
+<body>
+<header th:replace="fragments/dashboard-layout :: header"></header>
+<aside th:replace="fragments/dashboard-layout :: sidebar('formations')"></aside> 
+
+<main class="app-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="page-title">Créer une formation</h1>
+        <a href="/formations" class="btn btn-outline-primary btn-app">
+            <i class="fas fa-arrow-left"></i>Retour
+        </a>
+    </div>
+
+    <div class="app-card">
+        <div class="app-card-body">
+            <form th:action="@{/formations/create}" th:object="${formation}" method="post">
+                <div class="mb-3">
+                    <label for="titre" class="form-label">Titre de la formation *</label>
+                    <input type="text" class="form-control" id="titre" th:field="*{titre}" required>
+                    <div class="text-danger" th:if="${#fields.hasErrors('titre')}" th:errors="*{titre}"></div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description *</label>
+                    <textarea class="form-control" id="description" th:field="*{description}" rows="5" required></textarea>
+                    <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="lieu" class="form-label">Lieu *</label>
+                    <input type="text" class="form-control" id="lieu" th:field="*{lieu}" required>
+                    <div class="text-danger" th:if="${#fields.hasErrors('lieu')}" th:errors="*{lieu}"></div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="dateDebut" class="form-label">Date de début *</label>
+                        <input type="date" class="form-control" id="dateDebut" th:field="*{dateDebut}" required>
+                        <div class="text-danger" th:if="${#fields.hasErrors('dateDebut')}" th:errors="*{dateDebut}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="dateFin" class="form-label">Date de fin *</label>
+                        <input type="date" class="form-control" id="dateFin" th:field="*{dateFin}" required>
+                        <div class="text-danger" th:if="${#fields.hasErrors('dateFin')}" th:errors="*{dateFin}"></div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="prix" class="form-label">Prix (FCFA) *</label>
+                    <input type="number" class="form-control" id="prix" th:field="*{prix}" min="0" step="1" required>
+                    <div class="text-danger" th:if="${#fields.hasErrors('prix')}" th:errors="*{prix}"></div>
+                    <small class="form-text text-muted">Entrez un montant entier sans décimales.</small>
+                </div>
+                
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary btn-app">
+                        <i class="fas fa-save me-2"></i>Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<th:block th:replace="fragments/dashboard-layout :: scripts"></th:block>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const dateDebutInput = document.getElementById('dateDebut');
+    const dateFinInput = document.getElementById('dateFin');
+    
+    form.addEventListener('submit', function(event) {
+        const dateDebut = new Date(dateDebutInput.value);
+        const dateFin = new Date(dateFinInput.value);
+        
+        // Vérifier que la date de fin est après la date de début
+        if (dateFin <= dateDebut) {
+            event.preventDefault();
+            alert('La date de fin doit être postérieure à la date de début.');
+            dateFinInput.focus();
+        }
+    });
+});
+</script>
+</body>
+</html>

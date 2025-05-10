@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/dashboard-layout}">
+<head>
+    <title>Mes exercices pratiques - Art Oratoire</title>
+    <style>
+        .exercise-card {
+            transition: transform 0.3s ease;
+        }
+        .exercise-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .video-thumbnail {
+            position: relative;
+            height: 160px;
+            overflow: hidden;
+            border-radius: 8px;
+        }
+        .video-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .video-play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 3rem;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        .video-thumbnail:hover .video-play-icon {
+            opacity: 1;
+        }
+        .status-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+        }
+        .rating-stars {
+            color: #ffc107;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 50px 0;
+        }
+        .empty-state i {
+            font-size: 4rem;
+            color: #e0e0e0;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container-fluid">
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                <h1 class="h3 mb-0 text-gray-800">Mes exercices pratiques</h1>
+                <div>
+                    <a href="/exercices" class="btn btn-sm btn-secondary shadow-sm mr-2">
+                        <i class="fas fa-list fa-sm text-white-50"></i> Tous les exercices
+                    </a>
+                    <a href="/exercices/create" class="btn btn-sm btn-primary shadow-sm">
+                        <i class="fas fa-plus-circle fa-sm text-white-50"></i> Créer un exercice
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Statistiques -->
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Total des exercices
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${exercices.size()}">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-video fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                        Note moyenne
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        <span th:if="${!exercices.empty}">
+                                            <span th:with="avg=${exercices.stream().filter(e -> e.noteGemini != null).mapToDouble(e -> e.noteGemini).average().orElse(0)}">
+                                                <span th:text="${#numbers.formatDecimal(avg, 1, 1)}">0.0</span>/10
+                                            </span>
+                                        </span>
+                                        <span th:if="${exercices.empty}">N/A</span>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-star fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                        Total des vues
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        <span th:if="${!exercices.empty}">
+                                            <span th:with="total=${exercices.stream().mapToInt(e -> e.vues != null ? e.vues : 0).sum()}">
+                                                <span th:text="${total}">0</span>
+                                            </span>
+                                        </span>
+                                        <span th:if="${exercices.empty}">0</span>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-eye fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                        Exercices publics
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        <span th:if="${!exercices.empty}">
+                                            <span th:with="count=${exercices.stream().filter(e -> e.publique).count()}">
+                                                <span th:text="${count}">0</span>
+                                            </span>
+                                        </span>
+                                        <span th:if="${exercices.empty}">0</span>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-globe fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Liste des exercices -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Mes exercices d'art oratoire</h6>
+                </div>
+                <div class="card-body">
+                    <div th:if="${!exercices.empty}" class="row">
+                        <div th:each="exercice : ${exercices}" class="col-md-6 col-lg-4 mb-4">
+                            <div class="card exercise-card h-100">
+                                <div class="video-thumbnail">
+                                    <!-- Badge de statut public/privé -->
+                                    <span class="status-badge badge" 
+                                          th:classappend="${exercice.publique ? 'badge-success' : 'badge-secondary'}">
+                                        <i th:class="${exercice.publique ? 'fas fa-globe' : 'fas fa-lock'}"></i>
+                                        <span th:text="${exercice.publique ? 'Public' : 'Privé'}"></span>
+                                    </span>
+                                    
+                                    <!-- Image de prévisualisation (simulée) -->
+                                    <img th:src="@{/placeholder.svg?height=160&width=300}" alt="Prévisualisation vidéo">
+                                    
+                                    <!-- Icône de lecture -->
+                                    <div class="video-play-icon">
+                                        <i class="fas fa-play-circle"></i>
+                                    </div>
+                                </div>
+                                
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <a th:href="@{/exercices/view/{id}(id=${exercice.id})}" th:text="${exercice.titre}">
+                                            Titre de l'exercice
+                                        </a>
+                                    </h5>
+                                    
+                                    <p class="card-text text-muted small" th:text="${#strings.abbreviate(exercice.description, 80)}">
+                                        Description de l'exercice...
+                                    </p>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="rating-stars">
+                                            <span th:if="${exercice.noteGemini != null}">
+                                                <i class="fas fa-star"></i>
+                                                <span th:text="${#numbers.formatDecimal(exercice.noteGemini, 1, 1)}">4.5</span>/10
+                                            </span>
+                                            <span th:unless="${exercice.noteGemini != null}">
+                                                <i class="far fa-star"></i> Non évalué
+                                            </span>
+                                        </div>
+                                        
+                                        <div class="text-muted small">
+                                            <i class="fas fa-eye"></i> <span th:text="${exercice.vues}">0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card-footer bg-transparent">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted" th:text="${#temporals.format(exercice.dateCreation, 'dd/MM/yyyy')}">01/01/2023</small>
+                                        <div>
+                                            <a th:href="@{/exercices/view/{id}(id=${exercice.id})}" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-eye"></i> Voir
+                                            </a>
+                                            <form th:action="@{/exercices/delete/{id}(id=${exercice.id})}" method="post" class="d-inline" 
+                                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet exercice?');">
+                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- État vide -->
+                    <div th:if="${exercices.empty}" class="empty-state">
+                        <i class="fas fa-video-slash"></i>
+                        <h4>Vous n'avez pas encore créé d'exercices</h4>
+                        <p class="text-muted">Créez votre premier exercice d'art oratoire pour recevoir une analyse IA personnalisée</p>
+                        <a href="/exercices/create" class="btn btn-primary mt-3">
+                            <i class="fas fa-plus-circle"></i> Créer mon premier exercice
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

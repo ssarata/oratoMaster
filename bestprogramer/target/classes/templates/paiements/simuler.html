@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/dashboard-layout :: head('Simulation de paiement')">
+    <title>Simulation de paiement</title>
+</head>
+<body>
+<header th:replace="fragments/dashboard-layout :: header"></header>
+<aside th:replace="fragments/dashboard-layout :: sidebar('formations')"></aside> 
+
+<main class="app-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="page-title">Simulation de paiement</h1>
+        <a href="/formations" class="btn btn-outline-primary btn-app">
+            <i class="fas fa-arrow-left"></i>Retour aux formations
+        </a>
+    </div>
+
+    <div class="app-card">
+        <div class="app-card-header">
+            <h3 class="app-card-title">Plateforme de paiement</h3>
+            <div class="app-card-icon">
+                <i class="fas fa-money-bill-wave"></i>
+            </div>
+        </div>
+        <div class="app-card-body">
+            <div class="row">
+                <div class="col-md-6 mx-auto">
+                    <div class="text-center mb-4">
+                        <img src="/placeholder.svg?height=80&width=80" alt="Logo de paiement" class="mb-3">
+                        <h4 th:if="${paiement.methode == 'T-Money'}">Paiement T-Money</h4>
+                        <h4 th:if="${paiement.methode == 'Flooz'}">Paiement Flooz</h4>
+                        <h4 th:if="${paiement.methode == 'Carte bancaire'}">Paiement par carte bancaire</h4>
+                    </div>
+                    
+                    <div class="payment-details p-4 bg-light rounded mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Marchand:</span>
+                            <span class="fw-bold">Art Oratoire</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Référence:</span>
+                            <span class="fw-bold" th:text="${paiement.reference}">REF123456</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Montant:</span>
+                            <span class="fw-bold" th:text="${#numbers.formatDecimal(paiement.montant, 0, 'COMMA', 0, 'POINT') + ' FCFA'}">50000 FCFA</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Téléphone:</span>
+                            <span class="fw-bold" th:text="${telephone}">90123456</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Date:</span>
+                            <span class="fw-bold" th:text="${#temporals.format(paiement.datePaiement, 'dd/MM/yyyy')}">01/01/2023</span>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info mb-4">
+                        <p class="mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Note:</strong> Ceci est une simulation de paiement. Dans un environnement réel, vous seriez redirigé vers la plateforme de paiement sécurisée.
+                        </p>
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <form th:action="@{'/paiements/confirmer/' + ${paiement.id}}" method="post" class="flex-grow-1">
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="fas fa-check-circle me-2"></i>Simuler un paiement réussi
+                            </button>
+                        </form>
+                        
+                        <form th:action="@{'/paiements/annuler/' + ${paiement.id}}" method="post" class="flex-grow-1">
+                            <button type="submit" class="btn btn-danger w-100">
+                                <i class="fas fa-times-circle me-2"></i>Simuler un échec de paiement
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block th:replace="fragments/dashboard-layout :: scripts"></th:block>
+</body>
+</html>

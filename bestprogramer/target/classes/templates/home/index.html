@@ -11,9 +11,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #4e2a84;
+            --primary-color: #7f7988;
             --secondary-color: #f72585;
-            --accent-color: #4cc9f0;
+            --accent-color: #060b0c;
             --dark-color: #2b2d42;
             --light-color: #f8f9fa;
             --gradient-primary: linear-gradient(135deg, #4e2a84, #7c4dff);
@@ -444,6 +444,100 @@
             font-size: 0.75rem;
         }
         
+        /* Nouvelles classes pour illustrer l'art oratoire */
+        .speech-bubble {
+            position: relative;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .speech-bubble:after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50px;
+            border-width: 15px 15px 0;
+            border-style: solid;
+            border-color: rgba(255, 255, 255, 0.2) transparent;
+        }
+        
+        .speech-quote {
+            font-style: italic;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .speech-author {
+            font-weight: 600;
+            text-align: right;
+        }
+        
+        .skill-bar {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .skill-progress {
+            height: 100%;
+            background: white;
+            border-radius: 5px;
+            width: 0;
+            transition: width 1.5s ease;
+        }
+        
+        .skill-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            color: white;
+            font-weight: 500;
+        }
+        
+        .oratory-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .oratory-step {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .oratory-step:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .oratory-step-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .oratory-step-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            border-radius: 50%;
+            background: white;
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
         @media (max-width: 991.98px) {
             .hero-title {
                 font-size: 2.5rem;
@@ -518,15 +612,94 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6">
+                    <div class="speech-bubble">
+                        <p class="speech-quote">"L'éloquence est l'art de tout dire sans rien prononcer."</p>
+                        <p class="speech-author">- Victor Hugo</p>
+                    </div>
                     <h1 class="hero-title">Maîtrisez l'Art de la Parole</h1>
                     <p class="hero-subtitle">Développez vos compétences en communication orale et devenez un orateur confiant et persuasif grâce à notre formation complète.</p>
+                    
+                    <!-- Barres de compétences -->
+                    <div class="mb-4">
+                        <div class="skill-label">
+                            <span>Confiance en soi</span>
+                            <span>90%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 90%;"></div>
+                        </div>
+                        
+                        <div class="skill-label">
+                            <span>Techniques de persuasion</span>
+                            <span>85%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 85%;"></div>
+                        </div>
+                        
+                        <div class="skill-label">
+                            <span>Gestion du stress</span>
+                            <span>95%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 95%;"></div>
+                        </div>
+                    </div>
+                    
                     <div class="d-flex gap-3">
                         <a href="/register" class="btn btn-hero btn-hero-primary">Commencer maintenant</a>
                         <a href="#about" class="btn btn-hero btn-hero-outline">En savoir plus</a>
                     </div>
                 </div>
                 <div class="col-lg-6 d-none d-lg-block">
-                    <img src="/placeholder.svg?height=400&width=500" alt="Art Oratoire" class="img-fluid hero-image">
+                    <div class="position-relative">
+                        <img src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Art Oratoire" class="img-fluid hero-image">
+                        <div class="position-absolute" style="top: 20px; right: -20px; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
+                            <i class="fas fa-microphone fa-2x text-primary"></i>
+                        </div>
+                        <div class="position-absolute" style="bottom: 30px; left: -20px; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
+                            <i class="fas fa-comments fa-2x text-primary"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Étapes de l'art oratoire -->
+            <div class="row mt-5">
+                <div class="col-12 text-center mb-4">
+                    <h3 class="text-white">Les piliers de l'art oratoire</h3>
+                </div>
+                <div class="col-md-3">
+                    <div class="oratory-step">
+                        <div class="oratory-step-number">1</div>
+                        <i class="fas fa-brain oratory-icon"></i>
+                        <h4 class="oratory-step-title">Préparation</h4>
+                        <p>Structurez vos idées et maîtrisez votre sujet</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="oratory-step">
+                        <div class="oratory-step-number">2</div>
+                        <i class="fas fa-volume-up oratory-icon"></i>
+                        <h4 class="oratory-step-title">Élocution</h4>
+                        <p>Travaillez votre voix, articulation et rythme</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="oratory-step">
+                        <div class="oratory-step-number">3</div>
+                        <i class="fas fa-walking oratory-icon"></i>
+                        <h4 class="oratory-step-title">Gestuelle</h4>
+                        <p>Maîtrisez votre langage corporel et posture</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="oratory-step">
+                        <div class="oratory-step-number">4</div>
+                        <i class="fas fa-users oratory-icon"></i>
+                        <h4 class="oratory-step-title">Connection</h4>
+                        <p>Établissez un lien avec votre audience</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -537,7 +710,7 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6 mb-5 mb-lg-0">
-                    <img src="/placeholder.svg?height=400&width=500" alt="À propos de nous" class="img-fluid about-img">
+                    <img src="https://images.unsplash.com/photo-1560439514-4e9645039924?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="À propos de nous" class="img-fluid about-img">
                 </div>
                 <div class="col-lg-6">
                     <h2 class="section-title">Pourquoi choisir notre formation ?</h2>
@@ -659,7 +832,7 @@
                 <div class="col-md-4">
                     <div class="card testimonial-card h-100">
                         <div class="card-body text-center p-4">
-                            <img src="/placeholder.svg?height=80&width=80" alt="Témoignage" class="testimonial-img">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Témoignage" class="testimonial-img">
                             <h5 class="testimonial-name">Amadou Diallo</h5>
                             <p class="testimonial-position">Entrepreneur</p>
                             <p class="testimonial-text">"Cette formation a complètement transformé ma façon de communiquer. Je suis maintenant beaucoup plus confiant lors de mes présentations professionnelles."</p>
@@ -676,7 +849,7 @@
                 <div class="col-md-4">
                     <div class="card testimonial-card h-100">
                         <div class="card-body text-center p-4">
-                            <img src="/placeholder.svg?height=80&width=80" alt="Témoignage" class="testimonial-img">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Témoignage" class="testimonial-img">
                             <h5 class="testimonial-name">Fatou Ndiaye</h5>
                             <p class="testimonial-position">Enseignante</p>
                             <p class="testimonial-text">"Les techniques apprises m'ont permis de captiver l'attention de mes élèves. Le feedback de l'IA a été particulièrement utile pour améliorer ma diction."</p>
@@ -693,7 +866,7 @@
                 <div class="col-md-4">
                     <div class="card testimonial-card h-100">
                         <div class="card-body text-center p-4">
-                            <img src="/placeholder.svg?height=80&width=80" alt="Témoignage" class="testimonial-img">
+                            <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="Témoignage" class="testimonial-img">
                             <h5 class="testimonial-name">Kofi Mensah</h5>
                             <p class="testimonial-position">Étudiant</p>
                             <p class="testimonial-text">"J'avais une peur bleue de parler en public. Grâce à cette formation, j'ai pu surmonter cette peur et j'ai même remporté un concours d'éloquence !"</p>
@@ -784,6 +957,20 @@
             } else {
                 navbar.classList.remove('scrolled');
             }
+        });
+        
+        // Animation des barres de compétences
+        document.addEventListener('DOMContentLoaded', function() {
+            const skillBars = document.querySelectorAll('.skill-progress');
+            setTimeout(() => {
+                skillBars.forEach(bar => {
+                    const width = bar.style.width;
+                    bar.style.width = '0';
+                    setTimeout(() => {
+                        bar.style.width = width;
+                    }, 300);
+                });
+            }, 500);
         });
     </script>
 </body>

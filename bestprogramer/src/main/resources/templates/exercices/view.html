@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/dashboard-layout}">
+<head>
+    <title>Visualiser l'exercice - Art Oratoire</title>
+    <style>
+        .video-container {
+            position: relative;
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .video-player {
+            width: 100%;
+            border-radius: 8px;
+        }
+        .analysis-section {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .analysis-header img {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+        }
+        .score-badge {
+            font-size: 1.2rem;
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+        .feedback-item {
+            margin-bottom: 15px;
+            padding-left: 20px;
+            border-left: 3px solid #4e73df;
+        }
+        .similar-video-card {
+            transition: transform 0.3s ease;
+        }
+        .similar-video-card:hover {
+            transform: translateY(-5px);
+        }
+        .like-button {
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .like-button:hover {
+            transform: scale(1.1);
+        }
+        .like-button.liked {
+            color: #e74a3b;
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container-fluid">
+            <!-- Titre et actions -->
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                <h1 class="h3 mb-0 text-gray-800" th:text="${exercice.titre}">Titre de l'exercice</h1>
+                <div>
+                    <a href="/exercices" class="btn btn-sm btn-secondary shadow-sm mr-2">
+                        <i class="fas fa-arrow-left fa-sm text-white-50"></i> Retour aux exercices
+                    </a>
+                    <a th:if="${isOwner}" th:href="@{/exercices/mes-exercices}" class="btn btn-sm btn-primary shadow-sm">
+                        <i class="fas fa-list fa-sm text-white-50"></i> Mes exercices
+                    </a>
+                </div>
+            </div>
+            
+            <div class="row">
+                <!-- Colonne principale -->
+                <div class="col-lg-8">
+                    <!-- Lecteur vidéo -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <i class="fas fa-video"></i> Exercice d'art oratoire
+                            </h6>
+                            <div>
+                                <span class="badge badge-pill" 
+                                      th:classappend="${exercice.categorie == 'discours' ? 'badge-info' : 
+                                                       exercice.categorie == 'presentation' ? 'badge-success' :
+                                                       exercice.categorie == 'debat' ? 'badge-warning' :
+                                                       exercice.categorie == 'improvisation' ? 'badge-danger' :
+                                                       exercice.categorie == 'storytelling' ? 'badge-primary' : 'badge-secondary'}"
+                                      th:text="${exercice.categorie != null ? exercice.categorie : 'Non catégorisé'}">
+                                    Catégorie
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="video-container">
+                                <video class="video-player" controls>
+                                    <source th:src="@{'/uploads/' + ${exercice.videoUrl}}" type="video/mp4">
+                                    Votre navigateur ne supporte pas la lecture de vidéos.
+                                </video>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="d-flex align-items-center">
+                                    <img class="rounded-circle mr-2" style="width: 40px; height: 40px;"
+                                         th:src="${exercice.user.photo != null ? '/uploads/' + exercice.user.photo : '/img/undraw_profile.svg'}"
+                                         alt="Photo de profil">
+                                    <div>
+                                        <div th:text="${exercice.user.prenom + ' ' + exercice.user.nom}">Nom de l'utilisateur</div>
+                                        <small class="text-muted" th:text="${#temporals.format(exercice.dateCreation, 'dd MMMM yyyy')}">Date</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="mr-3">
+                                        <i class="fas fa-eye text-muted"></i> <span th:text="${exercice.vues}">0</span> vues
+                                    </div>
+                                    <div class="like-button" id="likeButton" th:data-id="${exercice.id}">
+                                        <i class="far fa-heart text-danger"></i> <span id="likeCount" th:text="${exercice.likes}">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <h5 class="mt-4">Description</h5>
+                            <p th:text="${exercice.description}">Description de l'exercice...</p>
+                            
+                            <div th:if="${exercice.consigne != null && !exercice.consigne.isEmpty()}" class="mt-3">
+                                <h6>Consigne donnée pour l'analyse:</h6>
+                                <div class="alert alert-light" th:text="${exercice.consigne}">
+                                    Consigne pour l'analyse...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Analyse Gemini -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <i class="fas fa-robot"></i> Analyse par Gemini
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="analysis-header">
+                                <img src="/img/gemini-logo.png" alt="Gemini Logo">
+                                <div>
+                                    <h5 class="mb-0">Évaluation de l'art oratoire</h5>
+                                    <small class="text-muted">Analyse automatisée par intelligence artificielle</small>
+                                </div>
+                                <div class="ml-auto">
+                                    <span class="badge score-badge" 
+                                          th:classappend="${exercice.noteGemini >= 8 ? 'badge-success' : 
+                                                           exercice.noteGemini >= 6 ? 'badge-info' : 
+                                                           exercice.noteGemini >= 4 ? 'badge-warning' : 'badge-danger'}"
+                                          th:text="${exercice.noteGemini != null ? exercice.noteGemini + '/10' : 'Non évalué'}">
+                                        8.5/10
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="analysis-section">
+                                <div th:if="${exercice.analyseGemini != null}" th:utext="${#strings.replace(#strings.escapeXml(exercice.analyseGemini), '&#10;', '<br/>')}">
+                                    Analyse détaillée de l'exercice...
+                                </div>
+                                <div th:unless="${exercice.analyseGemini != null}" class="text-center py-4">
+                                    <i class="fas fa-spinner fa-spin fa-2x mb-3 text-primary"></i>
+                                    <h5>Analyse en cours...</h5>
+                                    <p class="text-muted">L'IA est en train d'analyser votre exercice. Veuillez patienter.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Actions pour le propriétaire -->
+                    <div th:if="${isOwner}" class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <i class="fas fa-cog"></i> Actions
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <form th:action="@{/exercices/delete/{id}(id=${exercice.id})}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet exercice?');">
+                                        <button type="submit" class="btn btn-danger btn-block">
+                                            <i class="fas fa-trash"></i> Supprimer cet exercice
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" class="custom-control-input" id="togglePublic" 
+                                               th:checked="${exercice.publique}" disabled>
+                                        <label class="custom-control-label" for="togglePublic">
+                                            <span th:text="${exercice.publique ? 'Exercice public' : 'Exercice privé'}"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Colonne latérale -->
+                <div class="col-lg-4">
+                    <!-- Statistiques -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <i class="fas fa-chart-bar"></i> Statistiques
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6 mb-3">
+                                    <div class="card border-left-primary shadow h-100 py-2">
+                                        <div class="card-body">
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col mr-2">
+                                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                        Note
+                                                    </div>
+                                                    <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${exercice.noteGemini != null ? exercice.noteGemini + '/10' : 'N/A'}">
+                                                        8.5/10
+                                                    </div>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <i class="fas fa-star fa-2x text-gray-300"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <div class="card border-left-success shadow h-100 py-2">
+                                        <div class="card-body">
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col mr-2">
+                                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                                        Vues
+                                                    </div>
+                                                    <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${exercice.vues}">
+                                                        42
+                                                    </div>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <i class="fas fa-eye fa-2x text-gray-300"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <div class="card border-left-info shadow h-100 py-2">
+                                        <div class="card-body">
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col mr-2">
+                                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                                        Durée
+                                                    </div>
+                                                    <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${exercice.duree != null ? exercice.duree + ' min' : 'N/A'}">
+                                                        3 min
+                                                    </div>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <i class="fas fa-clock fa-2x text-gray-300"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <div class="card border-left-warning shadow h-100 py-2">
+                                        <div class="card-body">
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col mr-2">
+                                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                                        J'aime
+                                                    </div>
+                                                    <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${exercice.likes}">
+                                                        7
+                                                    </div>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <i class="fas fa-heart fa-2x text-gray-300"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Exercices similaires -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <i class="fas fa-video"></i> Exercices similaires
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div th:if="${similarExercices != null && !similarExercices.empty}">
+                                <div th:each="similar : ${similarExercices}" class="mb-3 similar-video-card">
+                                    <div class="d-flex">
+                                        <div class="flex-shrink-0 mr-3" style="width: 100px; height: 60px; overflow: hidden; border-radius: 4px;">
+                                            <a th:href="@{/exercices/view/{id}(id=${similar.id})}">
+                                                <img th:src="@{/placeholder.svg?height=60&width=100}" alt="Miniature" style="width: 100%; height: 100%; object-fit: cover;">
+                                            </a>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1">
+                                                <a th:href="@{/exercices/view/{id}(id=${similar.id})}" th:text="${similar.titre}">
+                                                    Titre de l'exercice similaire
+                                                </a>
+                                            </h6>
+                                            <div class="small text-muted">
+                                                <span th:text="${similar.user.prenom + ' ' + similar.user.nom}">Utilisateur</span> • 
+                                                <span th:text="${similar.vues}">0</span> vues
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div th:unless="${similarExercices != null && !similarExercices.empty}" class="text-center py-3">
+                                <p class="text-muted">Aucun exercice similaire trouvé</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Conseils d'amélioration -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <i class="fas fa-lightbulb"></i> Conseils d'amélioration
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="feedback-item">
+                                <h6>Posture et langage corporel</h6>
+                                <p class="small">Tenez-vous droit, gardez un contact visuel avec la caméra et utilisez des gestes pour appuyer vos propos.</p>
+                            </div>
+                            <div class="feedback-item">
+                                <h6>Voix et diction</h6>
+                                <p class="small">Variez le ton et le rythme de votre voix. Articulez clairement et faites des pauses stratégiques.</p>
+                            </div>
+                            <div class="feedback-item">
+                                <h6>Structure du discours</h6>
+                                <p class="small">Commencez par une accroche forte, développez 2-3 points clés et concluez de manière mémorable.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Script pour le bouton "J'aime" -->
+        <script th:inline="javascript">
+            document.addEventListener('DOMContentLoaded', function() {
+                const likeButton = document.getElementById('likeButton');
+                const likeCount = document.getElementById('likeCount');
+                
+                if (likeButton) {
+                    likeButton.addEventListener('click', function() {
+                        const exerciceId = this.getAttribute('data-id');
+                        
+                        fetch(`/exercices/like/${exerciceId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            }
+                        })
+                        .then(response => response.text())
+                        .then(data => {
+                            if (data !== 'error') {
+                                likeCount.textContent = data;
+                                likeButton.querySelector('i').classList.remove('far');
+                                likeButton.querySelector('i').classList.add('fas');
+                                likeButton.classList.add('liked');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erreur:', error);
+                        });
+                    });
+                }
+            });
+        </script>
+    </div>
+</body>
+</html>

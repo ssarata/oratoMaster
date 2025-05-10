@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/dashboard-layout}">
+<head>
+    <title>Exercices Pratiques - Art Oratoire</title>
+    <style>
+        .video-card {
+            transition: transform 0.3s ease;
+            height: 100%;
+        }
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .video-thumbnail {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            height: 200px;
+        }
+        .video-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .video-duration {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .video-play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 3rem;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        .video-thumbnail:hover .video-play-icon {
+            opacity: 1;
+        }
+        .rating-stars {
+            color: #ffc107;
+        }
+        .category-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 10;
+        }
+        .filters-section {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0 text-gray-800">Exercices Pratiques d'Art Oratoire</h1>
+                <a th:href="@{/exercices/create}" class="btn btn-primary">
+                    <i class="fas fa-plus-circle"></i> Créer un exercice
+                </a>
+            </div>
+            
+            <!-- Filtres et recherche -->
+            <div class="filters-section">
+                <div class="row">
+                    <div class="col-md-6">
+                        <form th:action="@{/exercices}" method="get" class="mb-3">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Rechercher un exercice..." 
+                                       name="search" th:value="${search}">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex justify-content-end">
+                            <div class="btn-group">
+                                <a th:href="@{/exercices(sort='recent')}" class="btn btn-outline-secondary" 
+                                   th:classappend="${sort == 'recent' || sort == null ? 'active' : ''}">
+                                    <i class="fas fa-clock"></i> Récents
+                                </a>
+                                <a th:href="@{/exercices(sort='vues')}" class="btn btn-outline-secondary"
+                                   th:classappend="${sort == 'vues' ? 'active' : ''}">
+                                    <i class="fas fa-eye"></i> Plus vus
+                                </a>
+                                <a th:href="@{/exercices(sort='notes')}" class="btn btn-outline-secondary"
+                                   th:classappend="${sort == 'notes' ? 'active' : ''}">
+                                    <i class="fas fa-star"></i> Mieux notés
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Catégories -->
+                <div class="mt-3">
+                    <div class="d-flex flex-wrap">
+                        <a th:href="@{/exercices}" class="badge badge-pill badge-light mr-2 mb-2 p-2">
+                            Tous
+                        </a>
+                        <a th:href="@{/exercices(categorie='discours')}" class="badge badge-pill badge-info mr-2 mb-2 p-2">
+                            Discours
+                        </a>
+                        <a th:href="@{/exercices(categorie='presentation')}" class="badge badge-pill badge-success mr-2 mb-2 p-2">
+                            Présentation
+                        </a>
+                        <a th:href="@{/exercices(categorie='debat')}" class="badge badge-pill badge-warning mr-2 mb-2 p-2">
+                            Débat
+                        </a>
+                        <a th:href="@{/exercices(categorie='improvisation')}" class="badge badge-pill badge-danger mr-2 mb-2 p-2">
+                            Improvisation
+                        </a>
+                        <a th:href="@{/exercices(categorie='storytelling')}" class="badge badge-pill badge-primary mr-2 mb-2 p-2">
+                            Storytelling
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Résultats de recherche -->
+            <div th:if="${search != null}" class="alert alert-info mb-4">
+                Résultats pour: <strong th:text="${search}"></strong>
+                <a th:href="@{/exercices}" class="float-right">Effacer la recherche</a>
+            </div>
+            
+            <!-- Filtrage par catégorie -->
+            <div th:if="${categorie != null}" class="alert alert-info mb-4">
+                Catégorie: <strong th:text="${categorie}"></strong>
+                <a th:href="@{/exercices}" class="float-right">Voir toutes les catégories</a>
+            </div>
+            
+            <!-- Liste des exercices -->
+            <div class="row">
+                <div th:each="exercice : ${exercices}" class="col-md-4 mb-4">
+                    <div class="card video-card h-100">
+                        <div class="video-thumbnail">
+                            <!-- Badge de catégorie -->
+                            <span th:if="${exercice.categorie != null}" class="category-badge badge"
+                                  th:classappend="${exercice.categorie == 'discours' ? 'badge-info' : 
+                                                   exercice.categorie == 'presentation' ? 'badge-success' :
+                                                   exercice.categorie == 'debat' ? 'badge-warning' :
+                                                   exercice.categorie == 'improvisation' ? 'badge-danger' :
+                                                   exercice.categorie == 'storytelling' ? 'badge-primary' : 'badge-secondary'}">
+                                <span th:text="${exercice.categorie}"></span>
+                            </span>
+                            
+                            <!-- Image de prévisualisation (simulée) -->
+                            <img th:src="@{/placeholder.svg?height=200&width=350}" alt="Prévisualisation vidéo">
+                            
+                            <!-- Icône de lecture -->
+                            <div class="video-play-icon">
+                                <i class="fas fa-play-circle"></i>
+                            </div>
+                            
+                            <!-- Durée de la vidéo -->
+                            <div class="video-duration" th:text="${exercice.duree != null ? exercice.duree + ' min' : '3:45'}">
+                                3:45
+                            </div>
+                        </div>
+                        
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a th:href="@{/exercices/view/{id}(id=${exercice.id})}" th:text="${exercice.titre}">
+                                    Titre de l'exercice
+                                </a>
+                            </h5>
+                            
+                            <p class="card-text text-muted" th:text="${#strings.abbreviate(exercice.description, 100)}">
+                                Description de l'exercice...
+                            </p>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="rating-stars">
+                                    <span th:if="${exercice.noteGemini != null}">
+                                        <i class="fas fa-star"></i>
+                                        <span th:text="${#numbers.formatDecimal(exercice.noteGemini, 1, 1)}">4.5</span>/10
+                                    </span>
+                                    <span th:unless="${exercice.noteGemini != null}">
+                                        <i class="far fa-star"></i> Non évalué
+                                    </span>
+                                </div>
+                                
+                                <div class="text-muted small">
+                                    <i class="fas fa-eye"></i> <span th:text="${exercice.vues}">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    <img class="rounded-circle mr-2" style="width: 30px; height: 30px;"
+                                         th:src="${exercice.user.photo != null ? '/uploads/' + exercice.user.photo : '/img/undraw_profile.svg'}"
+                                         alt="Photo de profil">
+                                    <span th:text="${exercice.user.prenom + ' ' + exercice.user.nom}">Nom de l'utilisateur</span>
+                                </div>
+                                <small class="text-muted" th:text="${#temporals.format(exercice.dateCreation, 'dd/MM/yyyy')}">01/01/2023</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Message si aucun exercice -->
+            <div th:if="${exercices.empty}" class="alert alert-info text-center my-5">
+                <i class="fas fa-info-circle fa-2x mb-3"></i>
+                <h4>Aucun exercice trouvé</h4>
+                <p>Soyez le premier à créer un exercice pratique d'art oratoire !</p>
+                <a th:href="@{/exercices/create}" class="btn btn-primary mt-2">
+                    <i class="fas fa-plus-circle"></i> Créer un exercice
+                </a>
+            </div>
+            
+            <!-- Pagination -->
+            <div th:if="${totalPages > 1}" class="d-flex justify-content-center mt-4">
+                <nav>
+                    <ul class="pagination">
+                        <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                            <a class="page-link" th:href="@{/exercices(page=${currentPage - 1}, size=9, search=${search}, categorie=${categorie}, sort=${sort})}">&laquo;</a>
+                        </li>
+                        <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" 
+                            th:classappend="${currentPage == i ? 'active' : ''}">
+                            <a class="page-link" th:href="@{/exercices(page=${i}, size=9, search=${search}, categorie=${categorie}, sort=${sort})}" 
+                               th:text="${i + 1}">1</a>
+                        </li>
+                        <li class="page-item" th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
+                            <a class="page-link" th:href="@{/exercices(page=${currentPage + 1}, size=9, search=${search}, categorie=${categorie}, sort=${sort})}">&raquo;</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

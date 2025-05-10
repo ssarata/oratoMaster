@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/dashboard-layout :: head('Modifier un livre')">
+    <title>Modifier un livre</title>
+</head>
+<body>
+<header th:replace="fragments/dashboard-layout :: header"></header>
+<aside th:replace="fragments/dashboard-layout :: sidebar('bibliotheque')"></aside> 
+
+<main class="app-content">
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="page-title">Modifier le livre</h1>
+            <a href="/livres" class="btn btn-outline-primary btn-app">
+                <i class="fas fa-arrow-left me-2"></i>Retour à la bibliothèque
+            </a>
+        </div>
+        
+        <div class="app-card">
+            <div class="app-card-header">
+                <h3 class="app-card-title">Informations du livre</h3>
+                <div class="app-card-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+            </div>
+            <div class="app-card-body">
+                <form th:action="@{/livres/update/{id}(id=${livre.id})}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    <input type="hidden" name="_method" value="put" />
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="titre" class="form-label">Titre du livre <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="titre" name="titre" th:value="${livre.titre}" required>
+                                <div class="invalid-feedback">Veuillez saisir un titre pour le livre.</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="auteur" class="form-label">Auteur</label>
+                                <input type="text" class="form-control" id="auteur" name="auteur" th:value="${livre.auteur}">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="categorie" class="form-label">Catégorie</label>
+                                <select class="form-select" id="categorie" name="categorie">
+                                    <option th:selected="${livre.categorie == null}" value="">Sélectionner une catégorie</option>
+                                    <option th:selected="${livre.categorie == 'Roman'}" value="Roman">Roman</option>
+                                    <option th:selected="${livre.categorie == 'Essai'}" value="Essai">Essai</option>
+                                    <option th:selected="${livre.categorie == 'Poésie'}" value="Poésie">Poésie</option>
+                                    <option th:selected="${livre.categorie == 'Théâtre'}" value="Théâtre">Théâtre</option>
+                                    <option th:selected="${livre.categorie == 'Technique'}" value="Technique">Technique</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="origine" class="form-label">Origine</label>
+                                <select class="form-select" id="origine" name="origine">
+                                    <option th:selected="${livre.origine == null}" value="">Sélectionner une origine</option>
+                                    <option th:selected="${livre.origine == 'Africaine'}" value="Africaine">Africaine</option>
+                                    <option th:selected="${livre.origine == 'Européenne'}" value="Européenne">Européenne</option>
+                                    <option th:selected="${livre.origine == 'Américaine'}" value="Américaine">Américaine</option>
+                                    <option th:selected="${livre.origine == 'Asiatique'}" value="Asiatique">Asiatique</option>
+                                </select>
+                            </div>
+                            
+                           
+                           
+                        </div>
+                        
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" name="description" rows="4" th:text="${livre.description}"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <div class="mb-4">
+                                <label for="file" class="form-label">Remplacer le fichier PDF (optionnel)</label>
+                                <input type="file" class="form-control" id="file" name="file" accept="application/pdf">
+                                <div class="form-text">Laissez vide si vous ne souhaitez pas remplacer le PDF.</div>
+                            </div>
+                            <div th:if="${livre.fichierPdf}">
+                                <a th:href="@{/download/{id}(id=${livre.id})}" class="btn btn-outline-info btn-sm" target="_blank">
+                                    <i class="fas fa-file-pdf me-2"></i>Télécharger le fichier actuel
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="app-card-footer mt-4 text-end">
+                        <button type="reset" class="btn btn-outline-secondary btn-app me-2">
+                            <i class="fas fa-redo me-2"></i>Réinitialiser
+                        </button>
+                        <button type="submit" class="btn btn-success btn-app">
+                            <i class="fas fa-save me-2"></i>Enregistrer les modifications
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block th:replace="fragments/dashboard-layout :: scripts"></th:block>
+<script>
+    // Validation des formulaires Bootstrap
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+</script>
+</body>
+</html>

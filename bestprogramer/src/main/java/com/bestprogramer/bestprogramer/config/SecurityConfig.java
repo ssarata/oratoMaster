@@ -18,17 +18,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            .csrf().disable() // Désactive la protection CSRF si nécessaire
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/", "/register", "/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/formateur/**").hasRole("FORMATEUR")
+                .requestMatchers("/livres/**", "/cours/**").permitAll() // Autorise l'accès aux routes spécifiques
                 .requestMatchers("/apprenant/**").hasRole("APPRENANT")
-                
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/login")
-                .defaultSuccessUrl("/dashboard")
+                .defaultSuccessUrl("/cours")
+                .failureUrl("/login?error=true")
                 .permitAll()
             )
             .logout(logout -> logout

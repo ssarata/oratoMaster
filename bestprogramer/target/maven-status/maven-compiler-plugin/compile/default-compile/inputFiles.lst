@@ -1,41 +1,52 @@
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/services/AIService.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/models/User.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/controllers/BibliothequeController.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/controllers/CertificatController.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/config/MvcConfig.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/repositories/CoursRepository.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/services/PdfService.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/models/Message.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/controllers/UserController.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/repositories/MessageRepository.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/services/CertificatService.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/controllers/AuthController.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/controllers/ApprenantController.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/models/Certificat.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/BestprogramerApplication.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/controllers/FormateurController.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/exceptions/StorageException.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/models/Module.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/repositories/ModuleRepository.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/models/Examen.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/services/StorageService.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/services/UserService.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/config/StorageProperties.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/repositories/ExamenRepository.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/repositories/SoumissionRepository.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/models/Cours.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/models/Livre.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/controllers/FormationController.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/controllers/MessageController.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/services/GeminiService.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/models/Progression.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/repositories/ProgressionRepository.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/models/Soumission.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/controllers/GeminiController.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/repositories/CertificatRepository.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/repositories/UserRepository.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/repositories/LivreRepository.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/controllers/GeminiTemplateController.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/exceptions/StorageFileNotFoundException.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/controllers/HomeController.java
-/home/sarata/Images/bestPro/oratoMaster/bestprogramer/src/main/java/com/bestprogramer/bestprogramer/config/SecurityConfig.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/models/Formation.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/repositories/ReponseRepository.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/models/Reponse.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/services/CertificatService.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/models/Paiement.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/repositories/ExerciceVideoRepository.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/config/MvcConfig.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/controllers/ExerciceVideoController.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/controllers/MessageController.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/controllers/FormateurController.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/BestprogramerApplication.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/services/UserService.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/config/SecurityConfig.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/services/AIService.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/models/Message.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/models/Quiz.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/repositories/LivreRepository.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/repositories/CoursRepository.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/controllers/UserController.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/repositories/MessageRepository.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/models/Question.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/repositories/UserRepository.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/controllers/HomeController.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/models/Livre.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/services/FormationService.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/controllers/FormationController.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/controllers/PaiementController.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/services/PdfService.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/controllers/InscriptionController.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/services/PaiementApiService.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/controllers/CertificatController.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/exceptions/StorageException.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/models/ExerciceVideo.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/models/Inscription.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/repositories/PaiementRepository.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/controllers/ApprenantController.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/models/User.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/config/StorageProperties.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/repositories/InscriptionRepository.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/models/Certificat.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/repositories/FormationRepository.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/services/InscriptionService.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/repositories/QuestionRepository.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/repositories/QuizRepository.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/controllers/AuthController.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/models/CoursModel.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/controllers/LivreController.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/exceptions/StorageFileNotFoundException.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/services/StorageService.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/controllers/CoursController.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/services/GeminiService.java
+/home/sarata/Téléchargements/bestprogramer (1)/src/main/java/com/bestprogramer/bestprogramer/services/PaiementService.java
